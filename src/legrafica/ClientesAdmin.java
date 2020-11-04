@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -30,8 +31,13 @@ public class ClientesAdmin extends javax.swing.JFrame {
     public ClientesAdmin() {
         initComponents();
         this.setLocationRelativeTo(null);
-
+        this.setTitle("Clientes");
         llenarTabla();
+        
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnAbrirProyecto.setEnabled(false);
+        btnCancelar.setEnabled(false);
     }
 
     private void llenarTabla() {
@@ -103,8 +109,14 @@ public class ClientesAdmin extends javax.swing.JFrame {
         btnAbrirProyecto = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         txtIdProyecto = new javax.swing.JTextField();
+        btnCancelar = new javax.swing.JButton();
 
         jTable1.setModel(modelo);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                usuarioSelecionado(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         txtIdCliente.setEditable(false);
@@ -144,14 +156,14 @@ public class ClientesAdmin extends javax.swing.JFrame {
         });
 
         btnCrear.setBackground(new java.awt.Color(0, 153, 255));
-        btnCrear.setText("Crear Usuario");
+        btnCrear.setText("Crear Cliente");
         btnCrear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCrearActionPerformed(evt);
             }
         });
 
-        btnModificar.setText("Modificar Usuario");
+        btnModificar.setText("Modificar Cliente");
         btnModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnModificarActionPerformed(evt);
@@ -160,7 +172,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
 
         jLabel7.setText("Contraseña");
 
-        btnSeleccionar.setText("Seleccionar Usuario");
+        btnSeleccionar.setText("Seleccionar Cliente");
         btnSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSeleccionarActionPerformed(evt);
@@ -177,56 +189,73 @@ public class ClientesAdmin extends javax.swing.JFrame {
         jLabel5.setText("Proyecto");
 
         txtIdProyecto.setEditable(false);
+        txtIdProyecto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIdProyectoActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtIdCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-                    .addComponent(txtUsuario)
-                    .addComponent(txtNombre)
-                    .addComponent(txtEmail)
-                    .addComponent(txtContra))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGap(47, 47, 47)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel7))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(radioDeshabilitar)
-                                    .addComponent(radioConProyecto)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(radioPotencial)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel5)
-                                        .addGap(13, 13, 13))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnSeleccionar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtIdCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                                    .addComponent(txtUsuario)
+                                    .addComponent(txtNombre)
+                                    .addComponent(txtEmail)
+                                    .addComponent(txtContra)))
+                            .addComponent(btnSeleccionar))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAbrirProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(12, 12, 12)
+                                        .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(12, 12, 12)
+                                        .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(radioDeshabilitar)
+                                            .addComponent(radioConProyecto)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(radioPotencial)
+                                                .addGap(97, 97, 97)
+                                                .addComponent(jLabel5)))
+                                        .addGap(19, 19, 19)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnAbrirProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(129, 129, 129)
+                                .addComponent(txtIdProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(129, 129, 129)
-                        .addComponent(txtIdProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
+                        .addContainerGap()
+                        .addComponent(jScrollPane1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -274,7 +303,8 @@ public class ClientesAdmin extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCrear)
                     .addComponent(btnModificar)
-                    .addComponent(btnSeleccionar))
+                    .addComponent(btnSeleccionar)
+                    .addComponent(btnCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -294,6 +324,9 @@ public class ClientesAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_radioConProyectoActionPerformed
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
+        btnCrear.setEnabled(false);
+        btnModificar.setEnabled(true);
+        btnCancelar.setEnabled(true);
         int fila = jTable1.getSelectedRow();
         txtIdCliente.setText(Integer.toString((Integer) jTable1.getValueAt(fila, 0)));
         txtUsuario.setText((String) jTable1.getValueAt(fila, 1));
@@ -351,7 +384,6 @@ public class ClientesAdmin extends javax.swing.JFrame {
                 || txtContra.getText().equals("")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
-            this.setEnabled(false);
         } else {
             try {
                 Connection con = ConnectDB.getConnection();
@@ -413,6 +445,10 @@ public class ClientesAdmin extends javax.swing.JFrame {
         }
         
         btnAbrirProyecto.setEnabled(false);
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+        btnCrear.setEnabled(true);
         limpiarCampos();
         llenarTabla();
     }//GEN-LAST:event_btnModificarActionPerformed
@@ -423,6 +459,24 @@ public class ClientesAdmin extends javax.swing.JFrame {
         fases.idProyecto=idProyecto;
         fases.setVisible(true);
     }//GEN-LAST:event_btnAbrirProyectoActionPerformed
+
+    private void txtIdProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdProyectoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIdProyectoActionPerformed
+
+    private void usuarioSelecionado(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_usuarioSelecionado
+        btnSeleccionar.setEnabled(true);
+    }//GEN-LAST:event_usuarioSelecionado
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        limpiarCampos();
+        llenarTabla();
+        btnCrear.setEnabled(true);
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnAbrirProyecto.setEnabled(false);
+        btnCancelar.setEnabled(false);
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -454,13 +508,16 @@ public class ClientesAdmin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClientesAdmin().setVisible(true);
+                JFrame ClientesAdmin = new JFrame("Clientes");
+                ClientesAdmin.setVisible(true);
+                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrirProyecto;
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnSeleccionar;

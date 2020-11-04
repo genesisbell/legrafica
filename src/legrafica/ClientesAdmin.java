@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -27,8 +29,11 @@ public class ClientesAdmin extends javax.swing.JFrame {
      * Creates new form ClientesAdmin
      */
     DefaultTableModel modelo = new DefaultTableModel();
+    private String emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+    private Pattern patternEmail = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
 
     public ClientesAdmin() {
+        
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("Clientes");
@@ -85,6 +90,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -120,6 +126,16 @@ public class ClientesAdmin extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         txtIdCliente.setEditable(false);
+        txtIdCliente.setBackground(new java.awt.Color(153, 153, 153));
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, txtNombre, org.jdesktop.beansbinding.ObjectProperty.create(), txtUsuario, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, txtEmail, org.jdesktop.beansbinding.ObjectProperty.create(), txtNombre, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, txtContra, org.jdesktop.beansbinding.ObjectProperty.create(), txtEmail, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
 
         jLabel1.setText("Usuario");
 
@@ -133,6 +149,10 @@ public class ClientesAdmin extends javax.swing.JFrame {
 
         buttonGroup1.add(radioPotencial);
         radioPotencial.setText("Potencial");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, radioConProyecto, org.jdesktop.beansbinding.ObjectProperty.create(), radioPotencial, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         radioPotencial.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioPotencialActionPerformed(evt);
@@ -141,6 +161,10 @@ public class ClientesAdmin extends javax.swing.JFrame {
 
         buttonGroup1.add(radioConProyecto);
         radioConProyecto.setText("Con Proyecto");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, radioDeshabilitar, org.jdesktop.beansbinding.ObjectProperty.create(), radioConProyecto, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         radioConProyecto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioConProyectoActionPerformed(evt);
@@ -149,6 +173,10 @@ public class ClientesAdmin extends javax.swing.JFrame {
 
         buttonGroup1.add(radioDeshabilitar);
         radioDeshabilitar.setText("Deshabilitado");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnAbrirProyecto, org.jdesktop.beansbinding.ObjectProperty.create(), radioDeshabilitar, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         radioDeshabilitar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioDeshabilitarActionPerformed(evt);
@@ -164,6 +192,10 @@ public class ClientesAdmin extends javax.swing.JFrame {
         });
 
         btnModificar.setText("Modificar Cliente");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnCancelar, org.jdesktop.beansbinding.ObjectProperty.create(), btnModificar, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnModificarActionPerformed(evt);
@@ -172,7 +204,14 @@ public class ClientesAdmin extends javax.swing.JFrame {
 
         jLabel7.setText("Contraseña");
 
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, radioPotencial, org.jdesktop.beansbinding.ObjectProperty.create(), txtContra, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnSeleccionar.setText("Seleccionar Cliente");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnModificar, org.jdesktop.beansbinding.ObjectProperty.create(), btnSeleccionar, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSeleccionarActionPerformed(evt);
@@ -180,6 +219,10 @@ public class ClientesAdmin extends javax.swing.JFrame {
         });
 
         btnAbrirProyecto.setText("Abrir Proyecto");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnSeleccionar, org.jdesktop.beansbinding.ObjectProperty.create(), btnAbrirProyecto, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnAbrirProyecto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAbrirProyectoActionPerformed(evt);
@@ -189,6 +232,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
         jLabel5.setText("Proyecto");
 
         txtIdProyecto.setEditable(false);
+        txtIdProyecto.setUI(null);
         txtIdProyecto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIdProyectoActionPerformed(evt);
@@ -196,6 +240,10 @@ public class ClientesAdmin extends javax.swing.JFrame {
         });
 
         btnCancelar.setText("Cancelar");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnCrear, org.jdesktop.beansbinding.ObjectProperty.create(), btnCancelar, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
@@ -252,7 +300,8 @@ public class ClientesAdmin extends javax.swing.JFrame {
                                     .addComponent(btnAbrirProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(129, 129, 129)
-                                .addComponent(txtIdProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(txtIdProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane1)))
@@ -308,6 +357,8 @@ public class ClientesAdmin extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        bindingGroup.bind();
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -327,6 +378,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
         btnCrear.setEnabled(false);
         btnModificar.setEnabled(true);
         btnCancelar.setEnabled(true);
+        
         int fila = jTable1.getSelectedRow();
         txtIdCliente.setText(Integer.toString((Integer) jTable1.getValueAt(fila, 0)));
         txtUsuario.setText((String) jTable1.getValueAt(fila, 1));
@@ -342,7 +394,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
         if (estado.equals("enProyecto")) {
             radioConProyecto.setSelected(true);
             
-            btnAbrirProyecto.setEnabled(true);
+            //btnAbrirProyecto.setEnabled(true);
         }
         if (estado.equals("deshabilitado")) {
             radioDeshabilitar.setSelected(true);
@@ -350,14 +402,28 @@ public class ClientesAdmin extends javax.swing.JFrame {
             btnAbrirProyecto.setEnabled(false);
 
         }
+        
+        if(txtIdProyecto.getText().equals("0")){
+            btnAbrirProyecto.setEnabled(false);
+            radioConProyecto.setEnabled(false);
+        }else{
+            btnAbrirProyecto.setEnabled(true);
+            radioConProyecto.setEnabled(true);
+        }
 
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
+        
+        Matcher matcher = patternEmail.matcher(txtEmail.getText());
+        
         if (txtUsuario.getText().equals("") || txtNombre.getText().equals("") || txtEmail.getText().equals("")
                 || txtContra.getText().equals("")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
+        } else if(matcher.matches() == false){
+            JDialog frame1 = new JDialog();
+            JOptionPane.showMessageDialog(frame1, "Favor de ingresar un e-mail valido");
         } else {
             try {
                 Connection con = ConnectDB.getConnection();
@@ -370,6 +436,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
                 ps.setString(4, (txtContra.getText()));
 
                 ps.executeUpdate();
+                
                 limpiarCampos();
                 llenarTabla();
             } catch (SQLException ex) {
@@ -380,11 +447,18 @@ public class ClientesAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        
+        Matcher matcher = patternEmail.matcher(txtEmail.getText());
+        
         if (txtUsuario.getText().equals("") || txtNombre.getText().equals("") || txtEmail.getText().equals("")
                 || txtContra.getText().equals("")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
-        } else {
+        } else if(!matcher.matches()){
+            JDialog frame1 = new JDialog();
+            JOptionPane.showMessageDialog(frame1, "Favor de ingresar un e-mail valido");           
+        }
+        else {
             try {
                 Connection con = ConnectDB.getConnection();
                 String sql = "UPDATE `cliente` SET `usuario` = ?, `nombre` = ?, `correo_electronico` = ?, `contrasena` = ? WHERE `cliente`.`id` = ?; ";
@@ -397,60 +471,59 @@ public class ClientesAdmin extends javax.swing.JFrame {
 
                 ps.executeUpdate();
                 
+                
+                if (radioPotencial.isSelected() == true) {
+
+                    try {
+                        sql = "UPDATE `cliente` SET `estado` = 'potencial' WHERE `cliente`.`id` = ?; ";
+                        ps = con.prepareStatement(sql);
+                        ps.setString(1, txtIdCliente.getText());
+                        ps.executeUpdate();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+
+                if (radioConProyecto.isSelected() == true) {
+
+                    try {
+                        sql = "UPDATE `cliente` SET `estado` = 'enProyecto' WHERE `cliente`.`id` = ?; ";
+                        ps = con.prepareStatement(sql);
+                        ps.setString(1, txtIdCliente.getText());
+                        ps.executeUpdate();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+                if (radioDeshabilitar.isSelected() == true) {
+
+                    try {
+                        sql = "UPDATE `cliente` SET `estado` = 'deshabilitado' WHERE `cliente`.`id` = ?; ";
+                        ps = con.prepareStatement(sql);
+                        ps.setString(1, txtIdCliente.getText());
+                        ps.executeUpdate();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+                
+                
+                btnAbrirProyecto.setEnabled(false);
+                btnSeleccionar.setEnabled(false);
+                btnModificar.setEnabled(false);
+                btnCancelar.setEnabled(false);
+                btnCrear.setEnabled(true);
+                limpiarCampos();
+                llenarTabla();
+                                
+                
             } catch (SQLException ex) {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        if (radioPotencial.isSelected() == true) {
-
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `cliente` SET `estado` = 'potencial' WHERE `cliente`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1, txtIdCliente.getText());
-                ps.executeUpdate();
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        if (radioConProyecto.isSelected() == true) {
-
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `cliente` SET `estado` = 'enProyecto' WHERE `cliente`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1, txtIdCliente.getText());
-                ps.executeUpdate();
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        if (radioDeshabilitar.isSelected() == true) {
-
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `cliente` SET `estado` = 'deshabilitado' WHERE `cliente`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1, txtIdCliente.getText());
-                ps.executeUpdate();
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        
-        btnAbrirProyecto.setEnabled(false);
-        btnSeleccionar.setEnabled(false);
-        btnModificar.setEnabled(false);
-        btnCancelar.setEnabled(false);
-        btnCrear.setEnabled(true);
-        limpiarCampos();
-        llenarTabla();
+        }    
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnAbrirProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirProyectoActionPerformed
@@ -540,5 +613,6 @@ public class ClientesAdmin extends javax.swing.JFrame {
     private javax.swing.JTextField txtIdProyecto;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtUsuario;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

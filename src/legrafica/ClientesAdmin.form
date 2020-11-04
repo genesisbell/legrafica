@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
     </Component>
@@ -81,7 +81,8 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="129" max="-2" attributes="0"/>
-                              <Component id="txtIdProyecto" min="-2" pref="136" max="-2" attributes="0"/>
+                              <Component id="txtIdProyecto" min="-2" pref="47" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -181,13 +182,25 @@
     <Component class="javax.swing.JTextField" name="txtIdCliente">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="99" green="99" red="99" type="rgb"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtUsuario">
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="txtNombre" target="txtUsuario" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtNombre">
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="txtEmail" target="txtNombre" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtEmail">
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="txtContra" target="txtEmail" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
@@ -221,6 +234,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Potencial"/>
       </Properties>
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="radioConProyecto" target="radioPotencial" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radioPotencialActionPerformed"/>
       </Events>
@@ -232,6 +248,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Con Proyecto"/>
       </Properties>
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="radioDeshabilitar" target="radioConProyecto" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radioConProyectoActionPerformed"/>
       </Events>
@@ -243,6 +262,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Deshabilitado"/>
       </Properties>
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="btnAbrirProyecto" target="radioDeshabilitar" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radioDeshabilitarActionPerformed"/>
       </Events>
@@ -262,6 +284,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Modificar Cliente"/>
       </Properties>
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="btnCancelar" target="btnModificar" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnModificarActionPerformed"/>
       </Events>
@@ -272,11 +297,17 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtContra">
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="radioPotencial" target="txtContra" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
     </Component>
     <Component class="javax.swing.JButton" name="btnSeleccionar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Seleccionar Cliente"/>
       </Properties>
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="btnModificar" target="btnSeleccionar" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSeleccionarActionPerformed"/>
       </Events>
@@ -285,6 +316,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Abrir Proyecto"/>
       </Properties>
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="btnSeleccionar" target="btnAbrirProyecto" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAbrirProyectoActionPerformed"/>
       </Events>
@@ -297,6 +331,9 @@
     <Component class="javax.swing.JTextField" name="txtIdProyecto">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
+        <Property name="UI" type="javax.swing.plaf.TextUI" editor="org.netbeans.modules.form.ComponentChooserEditor">
+          <ComponentRef name="null"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtIdProyectoActionPerformed"/>
@@ -306,6 +343,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Cancelar"/>
       </Properties>
+      <BindingProperties>
+        <BindingProperty name="nextFocusableComponent" source="btnCrear" target="btnCancelar" targetPath="nextFocusableComponent" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelarActionPerformed"/>
       </Events>

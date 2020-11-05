@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -32,26 +33,51 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     public ProyectosAdmin() {
         initComponents();
         this.setLocationRelativeTo(null);
+        setTitle("Proyectos");
         llenarTabla();
+
+        radioPorHacer.setSelected(true);
+        radioPaginaWeb.setSelected(true);
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnAbrirCrono.setEnabled(false);
 
     }
 
     private void llenarTabla() {
         Connection con = ConnectDB.getConnection();
         Statement consulta = null;
+
         if (con != null) {
             try {
                 consulta = con.createStatement();
                 String nulo = "ninguno";
                 ResultSet rs = consulta.executeQuery("Select * FROM proyecto");
-                modelo.setColumnCount(5);
-                modelo.setColumnIdentifiers(new Object[]{"Id", "Nombre", "Cliente", "Categoria", "Encargado", "Status", "Cronograma"});
+                modelo.setColumnCount(7);
+                modelo.setColumnIdentifiers(new Object[]{"ID", "Nombre", "Cliente", "Categoria", "Encargado", "Estado", "Cronograma"});
+
+                Statement consultaCliente = con.createStatement();
+                ResultSet rsCliente = consultaCliente.executeQuery("Select id, nombre FROM cliente");
+
+                while (rsCliente.next()) {
+                    cbxCliente.addItem(rsCliente.getString(2));
+                }
+                rsCliente.close();
+
+                Statement consultaEncargado = con.createStatement();
+                ResultSet rsEncargado = consultaEncargado.executeQuery("Select id, usuario FROM admin");
+
+                while (rsEncargado.next()) {
+                    cbxEncargado.addItem(rsEncargado.getString(2));
+                }
+                rsEncargado.close();
+
                 while (rs.next()) {
-                    int idProyecto = rs.getInt(5);
-                    if (idProyecto == 0) {
-                        modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),rs.getString(5), rs.getString(6),0});
+                    int idCronograma = rs.getInt(7);
+                    if (idCronograma == 0) {
+                        modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), 0});
                     } else {
-                        modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),rs.getString(5), rs.getString(6), rs.getInt(7)});
+                        modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)});
                     }
 
                 }
@@ -59,11 +85,14 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
     }
 
     private void limpiarCampos() {
         txtId.setText("");
         txtNombre.setText("");
+        cbxCliente.setSelectedIndex(0);
+        cbxEncargado.setSelectedIndex(0);
 
         radioPaginaWeb.setSelected(true);
         radioTerminado.setSelected(true);
@@ -83,8 +112,6 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -111,8 +138,8 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         cbxEncargado = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
-
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
 
         jLabel1.setText("Nombre");
 
@@ -204,9 +231,9 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
         jLabel6.setText("Encargado");
 
-        cbxCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar Cliente" }));
 
-        cbxEncargado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxEncargado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar Encargado" }));
 
         jLabel3.setText("Cronograma");
 
@@ -219,6 +246,14 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                 txtIdActionPerformed(evt);
             }
         });
+
+        jTable1.setModel(modelo);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1usuarioSelecionado(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -238,37 +273,28 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnCrearProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel5))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbxCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel5))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cbxCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(34, 34, 34)
-                                        .addComponent(jLabel4))
-                                    .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(radioProceso)
-                                    .addComponent(radioPorHacer)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(355, 355, 355)
-                                .addComponent(radioTerminado))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(38, 38, 38)
-                                .addComponent(btnAbrirCrono, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnCrearCrono)))
+                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(34, 34, 34)
+                                .addComponent(jLabel4))
+                            .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioProceso)
+                            .addComponent(radioPorHacer)
+                            .addComponent(radioTerminado))
                         .addGap(69, 69, 69)
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(radioRedes)
                             .addComponent(radioPaginaWeb)
@@ -277,62 +303,67 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                             .addComponent(radioDiseno)
                             .addComponent(radioGoogle)
                             .addComponent(radioTiendaLinea)
-                            .addComponent(radioBranding))))
-                .addContainerGap(18, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
+                            .addComponent(radioBranding)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(btnAbrirCrono, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCrearCrono)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap(29, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jScrollPane1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23)
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41)
                 .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(cbxCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(7, 7, 7)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnAbrirCrono)
+                            .addComponent(btnCrearCrono))
+                        .addGap(62, 62, 62))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(43, 43, 43)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel5)
-                                    .addComponent(cbxCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(7, 7, 7)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel6)
-                                    .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(btnAbrirCrono)
-                                    .addComponent(btnCrearCrono)))
+                                    .addComponent(radioPaginaWeb)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioApp)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioAppTienda)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioDiseno)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioGoogle))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel1)
                                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel4)
-                                    .addComponent(radioTerminado))
+                                    .addComponent(radioPorHacer))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(radioProceso)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(radioPorHacer)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(62, 62, 62))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(radioPaginaWeb)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioApp)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioAppTienda)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioDiseno)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioGoogle)
+                                .addComponent(radioTerminado)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioTiendaLinea)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -360,6 +391,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
     private void btnCrearProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearProyectoActionPerformed
         String categoria = "pagina_web";
+             
 
         if (radioPaginaWeb.isSelected() == true) {
             categoria = "pagina_web";
@@ -393,18 +425,20 @@ public class ProyectosAdmin extends javax.swing.JFrame {
             categoria = "diseno";
 
         }
-        if (txtNombre.getText().equals("")) {
+        if (txtNombre.getText().equals("") || 
+            cbxCliente.getSelectedItem().toString().equals("Seleccionar Cliente") || 
+            cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
         } else {
             try {
                 Connection con = ConnectDB.getConnection();
                 String sql = "INSERT INTO `proyecto` (`id`, `nombre`, `cliente`, `categoria`, `encargado`, `status`, `cronograma`) "
-                        + "VALUES ('', ?, ?, '" + categoria + "', ?, 'por_hacer', NULL);";
+                        + "VALUES (NULL, ?, ?, '" + categoria + "', ?, 'por_hacer', NULL);";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtNombre.getText());
-                ps.setString(2, cbxEncargado.getSelectedItem().toString());
-                ps.setString(3, cbxCliente.getSelectedItem().toString());
+                ps.setString(2, cbxCliente.getSelectedItem().toString());
+                ps.setString(3, cbxEncargado.getSelectedItem().toString());
 
                 ps.executeUpdate();
                 limpiarCampos();
@@ -422,10 +456,12 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         int fila = jTable1.getSelectedRow();
         txtId.setText(Integer.toString((Integer) jTable1.getValueAt(fila, 0)));
         txtNombre.setText((String) jTable1.getValueAt(fila, 1));
+        cbxCliente.setSelectedItem(jTable1.getValueAt(fila, 2));
 
-        String categoria = ((String) jTable1.getValueAt(fila, 2));
-        String estado = ((String) jTable1.getValueAt(fila, 3));
-        int cronograma = (Integer) jTable1.getValueAt(fila, 4);
+        String categoria = ((String) jTable1.getValueAt(fila, 3));
+        cbxEncargado.setSelectedItem(jTable1.getValueAt(fila, 4));
+        String estado = ((String) jTable1.getValueAt(fila, 5));
+        int cronograma = (Integer) jTable1.getValueAt(fila, 6);
 
         if (categoria.equals("pagina_web")) {
             radioPaginaWeb.setSelected(true);
@@ -477,17 +513,22 @@ public class ProyectosAdmin extends javax.swing.JFrame {
             btnAbrirCrono.setEnabled(true);
         }
 
+        btnModificar.setEnabled(true);
+        btnCrearProyecto.setEnabled(false);
+
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        int idProyecto = Integer.parseInt(txtId.getText());
+        //int idProyecto = Integer.parseInt(txtId.getText());
         try {
             Connection con = ConnectDB.getConnection();
-            String sql = "UPDATE `proyecto` SET `nombre` = ? WHERE `proyecto`.`id` = ?; ";
+            String sql = "UPDATE `proyecto` SET `nombre` = ?, `cliente` = ?, `encargado`= ? WHERE `proyecto`.`id` = ?; ";
             PreparedStatement ps;
             ps = con.prepareStatement(sql);
             ps.setString(1, txtNombre.getText());
-            ps.setString(2, txtId.getText());
+            ps.setString(2, cbxCliente.getSelectedItem().toString());
+            ps.setString(3, cbxEncargado.getSelectedItem().toString());
+            ps.setString(4, txtId.getText());
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
@@ -557,7 +598,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
     private void btnCrearCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearCronoActionPerformed
         int idProyecto = (Integer.parseInt(txtId.getText()));
-        String nombreTabla = "proyecto" + idProyecto;
+        String nombreTabla = "crono_proyecto_" + idProyecto;
         try {
             Connection con = ConnectDB.getConnection();
             String sql = "CREATE TABLE `legrafica`.`" + nombreTabla + "` ( `id` INT(11)"
@@ -603,6 +644,10 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIdActionPerformed
+
+    private void jTable1usuarioSelecionado(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1usuarioSelecionado
+        btnSeleccionar.setEnabled(true);
+    }//GEN-LAST:event_jTable1usuarioSelecionado
 
     /**
      * @param args the command line arguments

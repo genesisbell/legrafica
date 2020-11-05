@@ -68,6 +68,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
     }
 
     private void limpiarCampos() {
@@ -431,6 +432,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
                         + "`estado`, `proyecto`) VALUES (NULL, ?, ?, ?, ?, 'potencial', NULL);";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtUsuario.getText());
+                System.out.println(txtUsuario.getText());
                 ps.setString(2, txtNombre.getText());
                 ps.setString(3, (txtEmail.getText()));
                 ps.setString(4, (txtContra.getText()));

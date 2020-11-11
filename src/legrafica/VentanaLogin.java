@@ -27,6 +27,7 @@ public class VentanaLogin extends javax.swing.JFrame {
     public VentanaLogin() {
         initComponents();
         this.setLocationRelativeTo(null);
+        setTitle("Legráfica - Gestión de Proyectos");
     }
 
     /**

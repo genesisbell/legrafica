@@ -417,22 +417,25 @@ public class ClientesAdmin extends javax.swing.JFrame {
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
         
         Matcher matcher = patternEmail.matcher(txtEmail.getText());
+        String estado = "potencial";
+        JDialog frame = new JDialog();
+        
+        if(radioPotencial.isSelected()) estado = "potencial";
+        if(radioConProyecto.isSelected()) estado = "enProyecto";
+        if(radioDeshabilitar.isSelected()) estado = "deshabilitado";
         
         if (txtUsuario.getText().equals("") || txtNombre.getText().equals("") || txtEmail.getText().equals("")
                 || txtContra.getText().equals("")) {
-            JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
-        } else if(matcher.matches() == false){
-            JDialog frame1 = new JDialog();
-            JOptionPane.showMessageDialog(frame1, "Favor de ingresar un e-mail valido");
+        } else if(!matcher.matches()){
+            JOptionPane.showMessageDialog(frame, "Favor de ingresar un e-mail valido");
         } else {
             try {
                 Connection con = ConnectDB.getConnection();
                 String sql = "INSERT INTO `cliente` (`id`, `usuario`, `nombre`, `correo_electronico`, `contrasena`, "
-                        + "`estado`, `proyecto`) VALUES (NULL, ?, ?, ?, ?, 'potencial', NULL);";
+                        + "`estado`, `proyecto`) VALUES (NULL, ?, ?, ?, ?, '"+estado+"', NULL);";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtUsuario.getText());
-                System.out.println(txtUsuario.getText());
                 ps.setString(2, txtNombre.getText());
                 ps.setString(3, (txtEmail.getText()));
                 ps.setString(4, (txtContra.getText()));
@@ -451,67 +454,32 @@ public class ClientesAdmin extends javax.swing.JFrame {
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         
         Matcher matcher = patternEmail.matcher(txtEmail.getText());
+        String estado = "potencial";
+        JDialog frame = new JDialog();
+        
+        if(radioPotencial.isSelected()) estado = "potencial";
+        if(radioConProyecto.isSelected()) estado = "enProyecto";
+        if(radioDeshabilitar.isSelected()) estado = "deshabilitado";
         
         if (txtUsuario.getText().equals("") || txtNombre.getText().equals("") || txtEmail.getText().equals("")
                 || txtContra.getText().equals("")) {
-            JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
         } else if(!matcher.matches()){
-            JDialog frame1 = new JDialog();
-            JOptionPane.showMessageDialog(frame1, "Favor de ingresar un e-mail valido");           
+            JOptionPane.showMessageDialog(frame, "Favor de ingresar un e-mail valido");           
         }
         else {
             try {
                 Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `cliente` SET `usuario` = ?, `nombre` = ?, `correo_electronico` = ?, `contrasena` = ? WHERE `cliente`.`id` = ?; ";
+                String sql = "UPDATE `cliente` SET `usuario` = ?, `nombre` = ?, `correo_electronico` = ?, `contrasena` = ?, `estado` = ? WHERE `cliente`.`id` = ?; ";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtUsuario.getText());
                 ps.setString(2, txtNombre.getText());
                 ps.setString(3, (txtEmail.getText()));
                 ps.setString(4, (txtContra.getText()));
-                ps.setString(5, txtIdCliente.getText());
+                ps.setString(5, estado);
+                ps.setString(6, txtIdCliente.getText());
 
                 ps.executeUpdate();
-                
-                
-                if (radioPotencial.isSelected() == true) {
-
-                    try {
-                        sql = "UPDATE `cliente` SET `estado` = 'potencial' WHERE `cliente`.`id` = ?; ";
-                        ps = con.prepareStatement(sql);
-                        ps.setString(1, txtIdCliente.getText());
-                        ps.executeUpdate();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-
-                if (radioConProyecto.isSelected() == true) {
-
-                    try {
-                        sql = "UPDATE `cliente` SET `estado` = 'enProyecto' WHERE `cliente`.`id` = ?; ";
-                        ps = con.prepareStatement(sql);
-                        ps.setString(1, txtIdCliente.getText());
-                        ps.executeUpdate();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-                if (radioDeshabilitar.isSelected() == true) {
-
-                    try {
-                        sql = "UPDATE `cliente` SET `estado` = 'deshabilitado' WHERE `cliente`.`id` = ?; ";
-                        ps = con.prepareStatement(sql);
-                        ps.setString(1, txtIdCliente.getText());
-                        ps.executeUpdate();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-                
                 
                 btnAbrirProyecto.setEnabled(false);
                 btnSeleccionar.setEnabled(false);

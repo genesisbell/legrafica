@@ -414,39 +414,50 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
     private void btnCrearProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearProyectoActionPerformed
         String categoria = "pagina_web";
+        String estado = "por_hacer";
 
-        if (radioPaginaWeb.isSelected() == true) {
+        if (radioPaginaWeb.isSelected()) {
             categoria = "pagina_web";
 
         }
-        if (radioTiendaLinea.isSelected() == true) {
+        if (radioTiendaLinea.isSelected()) {
             categoria = "tienda_en_linea";
 
         }
-        if (radioApp.isSelected() == true) {
+        if (radioApp.isSelected()) {
             categoria = "app_movil";
 
         }
-        if (radioAppTienda.isSelected() == true) {
+        if (radioAppTienda.isSelected()) {
             categoria = "app_movil_tienda";
 
         }
-        if (radioRedes.isSelected() == true) {
+        if (radioRedes.isSelected()) {
             categoria = "redes_sociales";
 
         }
-        if (radioGoogle.isSelected() == true) {
+        if (radioGoogle.isSelected()) {
             categoria = "google_ads";
 
         }
-        if (radioBranding.isSelected() == true) {
+        if (radioBranding.isSelected()) {
             categoria = "branding";
-
         }
-        if (radioDiseno.isSelected() == true) {
+
+        if (radioDiseno.isSelected()) {
             categoria = "diseno";
-
         }
+
+        if (radioPorHacer.isSelected()) {
+            estado = "por_hacer";
+        }
+        if (radioProceso.isSelected()) {
+            estado = "en_proceso";
+        }
+        if (radioTerminado.isSelected()) {
+            estado = "terminado";
+        }
+
         if (txtNombre.getText().equals("")
                 || cbxCliente.getSelectedItem().toString().equals("Seleccionar Cliente")
                 || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
@@ -456,7 +467,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
             try {
                 Connection con = ConnectDB.getConnection();
                 String sql = "INSERT INTO `proyecto` (`id`, `nombre`, `cliente`, `categoria`, `encargado`, `status`, `cronograma`) "
-                        + "VALUES (NULL, ?, ?, '" + categoria + "', ?, 'por_hacer', NULL);";
+                        + "VALUES (NULL, ?, ?, '" + categoria + "', ?, '" + estado + "', NULL);";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtNombre.getText());
                 ps.setString(2, cbxCliente.getSelectedItem().toString());
@@ -560,6 +571,44 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         //int idProyecto = Integer.parseInt(txtId.getText());
 
+        String categoria = "pagina_web";
+        String estado = "por_hacer";
+
+        if (radioPaginaWeb.isSelected()) {
+            categoria = "pagina_web ";
+        }
+        if (radioApp.isSelected()) {
+            categoria = "app_movil";
+        }
+        if (radioAppTienda.isSelected()) {
+            categoria = "app_movil_tienda";
+        }
+        if (radioDiseno.isSelected()) {
+            categoria = "diseno";
+        }
+        if (radioGoogle.isSelected()) {
+            categoria = "google_ads";
+        }
+        if (radioTiendaLinea.isSelected()) {
+            categoria = "tienda_en_linea";
+        }
+        if (radioBranding.isSelected()) {
+            categoria = "branding";
+        }
+        if (radioRedes.isSelected()) {
+            categoria = "redes_sociales";
+        }
+
+        if (radioTerminado.isSelected()) {
+            estado = "terminado";
+        }
+        if (radioProceso.isSelected()) {
+            estado = "en_proceso";
+        }
+        if (radioPorHacer.isSelected()) {
+            estado = "por_hacer";
+        }
+
         if (txtNombre.getText().equals("")
                 || cbxCliente.getSelectedItem().toString().equals("Seleccionar Cliente")
                 || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
@@ -569,83 +618,33 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
             try {
                 Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `proyecto` SET `nombre` = ?, `cliente` = ?, `encargado`= ? WHERE `proyecto`.`id` = ?; ";
+                String sql = "UPDATE `proyecto` SET `nombre` = ?, `cliente` = ?, `categoria` = ?, `encargado`= ?, `status` = ? WHERE `proyecto`.`id` = ?; ";
                 PreparedStatement ps;
                 ps = con.prepareStatement(sql);
                 ps.setString(1, txtNombre.getText());
                 ps.setString(2, cbxCliente.getSelectedItem().toString());
-                ps.setString(3, cbxEncargado.getSelectedItem().toString());
-                ps.setString(4, txtId.getText());
+                ps.setString(3, categoria);
+                ps.setString(4, cbxEncargado.getSelectedItem().toString());
+                ps.setString(5, estado);
+                ps.setString(6, txtId.getText());
                 ps.executeUpdate();
 
-                //Modificar Estado
-                PreparedStatement psEstado;
-                String sqlEstado = null;
-                if (radioTerminado.isSelected() == true) {
-                    sqlEstado = "UPDATE `proyecto` SET `status` = 'terminado' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioProceso.isSelected() == true) {
-                    sqlEstado = "UPDATE `proyecto` SET `status` = 'en_proceso' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioPorHacer.isSelected() == true) {
-                    sqlEstado = "UPDATE `proyecto` SET `status` = 'por_hacer' WHERE `proyecto`.`id` = ?; ";
-                }
+                btnCrearProyecto.setEnabled(true);
+                btnCrearCrono.setEnabled(true);
 
-                psEstado = con.prepareStatement(sqlEstado);
-                psEstado.setString(1, txtId.getText());
-                psEstado.executeUpdate();
+                btnAbrirCrono.setEnabled(false);
+                btnSeleccionar.setEnabled(false);
+                btnModificar.setEnabled(false);
+                btnCancelar.setEnabled(false);
 
-                //Modificar categoria
-                PreparedStatement psCategoria;
-                String sqlCategoria = null;
-                if (radioPaginaWeb.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'pagina_web' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioApp.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'app_movil' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioAppTienda.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'app_movil_tienda' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioDiseno.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'diseno' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioGoogle.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'google_ads' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioTiendaLinea.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'tienda_en_linea' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioBranding.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'branding' WHERE `proyecto`.`id` = ?; ";
-                }
-                if (radioRedes.isSelected() == true) {
-                    sqlCategoria = "UPDATE `proyecto` SET `categoria` = 'redes_sociales' WHERE `proyecto`.`id` = ?; ";
-                }
-
-                psCategoria = con.prepareStatement(sqlCategoria);
-                psCategoria.setString(1, txtId.getText());
-                psCategoria.executeUpdate();
+                limpiarCampos();
+                llenarTabla();
 
             } catch (SQLException ex) {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
 
- 
-            btnCrearProyecto.setEnabled(true);
-            btnCrearCrono.setEnabled(true);
-            
-            btnAbrirCrono.setEnabled(false);
-            btnSeleccionar.setEnabled(false);
-            btnModificar.setEnabled(false);
-            btnCancelar.setEnabled(false);
-
-            limpiarCampos();
-            llenarTabla();
-
         }
-
-
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnCrearCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearCronoActionPerformed

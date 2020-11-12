@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -26,11 +28,19 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
      * Creates new form EmpleadosAdmin
      */
     DefaultTableModel modelo = new DefaultTableModel();
+    private String emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+    private Pattern patternEmail = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
 
     public EmpleadosAdmin() {
+        setTitle("Empleados");
         initComponents();
         llenarTabla();
         this.setLocationRelativeTo(null);
+
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+
     }
 
     private void llenarTabla() {
@@ -59,7 +69,7 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
         txtUsuario.setText("");
         txtContrasena.setText("");
         txtEmail.setText("");
-        
+
         radioActivo.setSelected(true);
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
@@ -78,7 +88,6 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -95,9 +104,12 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
         btnCancelar = new javax.swing.JButton();
 
         jTable1.setModel(modelo);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                empleadoSeleccionado(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
-
-        jLabel1.setText("Id");
 
         jLabel2.setText("Usuario");
 
@@ -112,6 +124,8 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
         radioInactivo.setText("Inactivo");
 
         txtId.setEditable(false);
+        txtId.setUI(null);
+        txtId.setEnabled(false);
 
         btnSeleccionar.setText("Seleccionar Empleado");
         btnSeleccionar.addActionListener(new java.awt.event.ActionListener() {
@@ -138,6 +152,11 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
         jLabel5.setText("E-mail");
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -150,8 +169,9 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
                                 .addComponent(btnSeleccionar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -160,10 +180,6 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
                         .addGap(14, 14, 14))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(32, 32, 32)
-                                .addComponent(jLabel1))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(22, 22, 22)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -180,7 +196,10 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(radioActivo)
-                                    .addComponent(radioInactivo))))
+                                    .addComponent(radioInactivo)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(144, 144, 144)
+                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -206,11 +225,9 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(36, 36, 36)
+                .addGap(18, 18, 18)
+                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSeleccionar)
                     .addComponent(btnCrear)
@@ -223,6 +240,11 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
+
+        btnCrear.setEnabled(false);
+        btnModificar.setEnabled(true);
+        btnCancelar.setEnabled(true);
+
         int fila = jTable1.getSelectedRow();
         txtId.setText(Integer.toString((Integer) jTable1.getValueAt(fila, 0)));
         txtUsuario.setText((String) jTable1.getValueAt(fila, 1));
@@ -241,18 +263,30 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
+
+        Matcher matcher = patternEmail.matcher(txtEmail.getText());
+        String estado = "activo";
+        JDialog frame = new JDialog();
+
+        if (radioActivo.isSelected()) {
+            estado = "activo";
+        }
+        if (radioInactivo.isSelected()) {
+            estado = "inactivo";
+        }
+
         if (txtUsuario.getText().equals("") || txtContrasena.getText().equals("") || txtEmail.getText().equals("")) {
-            JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
+        } else if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(frame, "Favor de ingresar un e-mail valido");
         } else {
             try {
                 Connection con = ConnectDB.getConnection();
-                String sql = "INSERT INTO `admin` (`id`, `usuario`, `contrasena`, `correo_electronico`, `estado`) VALUES (NULL, ?, ?, ?, 'activo'); ";
+                String sql = "INSERT INTO `admin` (`id`, `usuario`, `contrasena`, `correo_electronico`, `estado`) VALUES (NULL, ?, ?, ?, '" + estado + "'); ";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtUsuario.getText());
                 ps.setString(2, txtContrasena.getText());
                 ps.setString(3, (txtEmail.getText()));
-                
 
                 ps.executeUpdate();
                 limpiarCampos();
@@ -265,59 +299,64 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-       if(txtUsuario.getText().equals("")||txtContrasena.getText().equals("")||txtEmail.getText().equals("")){
-          JDialog frame = new JDialog();
+
+        Matcher matcher = patternEmail.matcher(txtEmail.getText());
+        JDialog frame = new JDialog();
+        String estado = "activo";
+
+        if (radioActivo.isSelected()) {
+            estado = "activo";
+        }
+        if (radioInactivo.isSelected()) {
+            estado = "inactivo";
+        }
+
+        if (txtUsuario.getText().equals("") || txtContrasena.getText().equals("") || txtEmail.getText().equals("")) {
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
-      }
-        else{
+        }else if(!matcher.matches()){
+            JOptionPane.showMessageDialog(frame, "Favor de ingresar un e-mail valido");
+        } else {
             try {
                 Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `admin` SET `usuario` = ?, `correo_electronico` = ?, `contrasena` = ? WHERE `admin`.`id` = ?; ";
+                String sql = "UPDATE `admin` SET `usuario` = ?, `contrasena` = ?, `correo_electronico` = ?, `estado` = ? WHERE `admin`.`id` = ?; ";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtUsuario.getText());
                 ps.setString(2, txtContrasena.getText());
                 ps.setString(3, (txtEmail.getText()));
-                
-                ps.setString(4,txtId.getText());
-                
+                ps.setString(4, estado);
+
+                ps.setString(5, txtId.getText());
+
                 ps.executeUpdate();
                 limpiarCampos();
                 llenarTabla();
+
+                btnSeleccionar.setEnabled(false);
+                btnModificar.setEnabled(false);
+                btnCancelar.setEnabled(false);
+                btnCrear.setEnabled(true);
             } catch (SQLException ex) {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        if(radioActivo.isSelected()==true){
-            
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `admin` SET `estado` = 'activo' WHERE `admin`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1,txtId.getText());
-            
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                
-       }
-       if(radioInactivo.isSelected()==true){
-            
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `admin` SET `estado` = 'inactivo' WHERE `admin`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1,txtId.getText());
-            
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                
-       }
-       limpiarCampos();
-       llenarTabla();
+
+
     }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void empleadoSeleccionado(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_empleadoSeleccionado
+        btnSeleccionar.setEnabled(true);
+    }//GEN-LAST:event_empleadoSeleccionado
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+        btnCrear.setEnabled(true);
+
+        limpiarCampos();
+        llenarTabla();
+
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -360,7 +399,6 @@ public class EmpleadosAdmin extends javax.swing.JFrame {
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnSeleccionar;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

@@ -128,76 +128,75 @@ public class VentanaLogin extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String usuario = jTextField2.getText();
-        String contraseña = jPasswordField1.getText();
+        String contraseña = new String(jPasswordField1.getPassword());
         String trueUser;
         String truePass;
-        String estado="a";
-        String nombre="a";
+        String estado = "a";
+        String nombre = "a";
         Connection con = ConnectDB.getConnection();
         boolean existe = false;
         Statement consulta = null;
-        int tipoUsuario=0;
+        int tipoUsuario = 0;
 
         try {
             consulta = con.createStatement();
             ResultSet rs = consulta.executeQuery("SELECT usuario, contrasena, estado FROM cliente");
-            
-                while (rs.next()) {
-                    trueUser = rs.getString(1);
-                    truePass = rs.getString(2);
-                    estado=rs.getString(3);
-                    if (usuario.equals(trueUser) && contraseña.equals(truePass)) {
-                        existe = true;
-                        tipoUsuario=1;
-                    }
+
+            while (rs.next()) {
+                trueUser = rs.getString(1);
+                truePass = rs.getString(2);
+                estado = rs.getString(3);
+                if (usuario.equals(trueUser) && contraseña.equals(truePass) && !estado.equals("deshabilitado")) {
+                    existe = true;
+                    tipoUsuario = 1;
                 }
-                rs = consulta.executeQuery("SELECT usuario, contrasena, estado FROM admin");
-                while (rs.next()) {
-                    trueUser = rs.getString(1);
-                    truePass = rs.getString(2);
-                    estado=rs.getString(3);
-                    if (usuario.equals(trueUser) && contraseña.equals(truePass)) {
-                        existe = true;
-                        tipoUsuario=2;
-                    }
+            }
+            rs = consulta.executeQuery("SELECT usuario, contrasena, estado FROM admin");
+            while (rs.next()) {
+                trueUser = rs.getString(1);
+                truePass = rs.getString(2);
+                estado = rs.getString(3);
+                if (usuario.equals(trueUser) && contraseña.equals(truePass) && !estado.equals("inactivo")) {
+                    existe = true;
+                    tipoUsuario = 2;
                 }
-            
-            if (existe != true || estado.equals("deshabilitado")||estado.equals("inactivo")) {
-                
-                
+            }
+
+            if (!existe) {
+
                 JDialog frame = new JDialog();
                 JOptionPane.showMessageDialog(frame, "Credenciales de acceso no validas. Por favor revise que haya insertado"
                         + " credenciales de acceso validas");
 
             } else {
-                if(tipoUsuario==1){
+                if (tipoUsuario == 1) {
                     rs = consulta.executeQuery("SELECT id, nombre FROM cliente WHERE usuario='" + usuario + "'");
-                    int id=0; 
-                    while(rs.next()){
+                    int id = 0;
+                    while (rs.next()) {
                         id = rs.getInt(1);
-                        nombre=rs.getString(2);
-                        
+                        nombre = rs.getString(2);
+
                     }
-                    ProyectoCliente proyecto= new ProyectoCliente();
-                    proyecto.idCliente=id;
-                    proyecto.nombreCliente=nombre;
+                    ProyectoCliente proyecto = new ProyectoCliente();
+                    proyecto.idCliente = id;
+                    proyecto.nombreCliente = nombre;
                     proyecto.setVisible(true);
                     this.setVisible(false);
-                
+
                 }
-                if(tipoUsuario==2){
+                if (tipoUsuario == 2) {
                     rs = consulta.executeQuery("SELECT id FROM admin WHERE usuario='" + usuario + "'");
-                    int id=0; 
-                    while(rs.next()){
+                    int id = 0;
+                    while (rs.next()) {
                         id = rs.getInt(1);
-                        
+
                     }
-                    MenuAdmin menu=new MenuAdmin();
-                        menu.id=id;
-                        this.setVisible(false);
-                        menu.setVisible(true);
+                    MenuAdmin menu = new MenuAdmin();
+                    menu.id = id;
+                    this.setVisible(false);
+                    menu.setVisible(true);
                 }
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(VentanaLogin.class.getName()).log(Level.SEVERE, null, ex);
@@ -207,7 +206,7 @@ public class VentanaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-System.exit(0);        // TODO add your handling code here:
+        System.exit(0);        // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

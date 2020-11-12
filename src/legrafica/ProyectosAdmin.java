@@ -564,7 +564,6 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
         btnModificar.setEnabled(true);
         btnCancelar.setEnabled(true);
-        btnCrearCrono.setEnabled(true);
         btnCrearProyecto.setEnabled(false);
 
 
@@ -686,18 +685,11 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearCronoActionPerformed
 
     private void btnAbrirCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirCronoActionPerformed
-        //
-       int esteProyecto = (Integer.parseInt(txtId.getText()));
-//        idProyecto.setId(esteProyecto);
-//        //fases.idProyecto = idProyecto;
-//        System.out.println(idProyecto.getId());
-//        System.out.println("lajshd"  + esteProyecto);
+        int esteProyecto = (Integer.parseInt(txtId.getText()));
 
         legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
         idProyecto.setId(esteProyecto);
         FasesAdmin fases = new FasesAdmin(idProyecto);
-
-        //fases.idProyecto = idProyecto;
         fases.setVisible(true);
 
     }//GEN-LAST:event_btnAbrirCronoActionPerformed

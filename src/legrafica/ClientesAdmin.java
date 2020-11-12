@@ -29,6 +29,7 @@ public class ClientesAdmin extends javax.swing.JFrame {
      * Creates new form ClientesAdmin
      */
     DefaultTableModel modelo = new DefaultTableModel();
+    
     private String emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
     private Pattern patternEmail = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
 
@@ -497,10 +498,11 @@ public class ClientesAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnAbrirProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirProyectoActionPerformed
-        int idProyecto=Integer.parseInt(txtIdProyecto.getText());
-        //FasesAdmin fases =new FasesAdmin();
-        //fases.idProyecto=idProyecto;
-        //fases.setVisible(true);
+        int esteProyecto = Integer.parseInt(txtIdProyecto.getText());
+        legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
+        idProyecto.setId(esteProyecto);
+        FasesAdmin fases =new FasesAdmin(idProyecto);        
+        fases.setVisible(true);
     }//GEN-LAST:event_btnAbrirProyectoActionPerformed
 
     private void txtIdProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdProyectoActionPerformed

@@ -33,9 +33,15 @@ public class FasesAdmin extends javax.swing.JFrame {
         initComponents();
         idProyecto = parametro;
         this.setLocationRelativeTo(null);
-        radioPorHacer.setSelected(true);
         setTitle("Cronograma");
+        
         llenarTabla();
+        llenarComboBox();
+        
+        radioPorHacer.setSelected(true);
+        btnCancelar.setEnabled(false);
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
     }
 
     private void llenarTabla() {
@@ -47,7 +53,6 @@ public class FasesAdmin extends javax.swing.JFrame {
                 consulta = con.createStatement();
 
                 ResultSet rs = consulta.executeQuery("Select * FROM " + nombreTabla);
-                System.out.println(nombreTabla);
                 modelo.setColumnCount(6);
                 modelo.setColumnIdentifiers(new Object[]{"Id", "Etapa", "Fecha Inicio", "Fecha Termino", "Status", "Encargado"});
                 while (rs.next()) {
@@ -61,18 +66,39 @@ public class FasesAdmin extends javax.swing.JFrame {
             }
         }
     }
+    
+       private void llenarComboBox() {
+
+        Connection con = ConnectDB.getConnection();
+
+        try {
+            Statement consultaEncargado = con.createStatement();
+            ResultSet rsEncargado = consultaEncargado.executeQuery("Select id, usuario FROM admin");
+
+            while (rsEncargado.next()) {
+                cbxEncargado.addItem(rsEncargado.getString(2));
+            }
+            rsEncargado.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
     private void limpiarCampos() {
         txtId.setText("");
         txtEtapa.setText("");
         txtFechaInicio.setText("");
         txtFechaTermino.setText("");
-        txtEncargado.setText("");
+        cbxEncargado.setSelectedIndex(0);
         radioPorHacer.setSelected(true);
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
     }
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -100,13 +126,16 @@ public class FasesAdmin extends javax.swing.JFrame {
         btnSeleccionar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        txtEncargado = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        btnActualizar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        cbxEncargado = new javax.swing.JComboBox<>();
 
         tableFases.setModel(modelo);
+        tableFases.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableFasesMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tableFases);
 
         jLabel1.setText("Etapa");
@@ -127,6 +156,13 @@ public class FasesAdmin extends javax.swing.JFrame {
         radioPorHacer.setText("Por Hacer");
 
         txtId.setEditable(false);
+        txtId.setUI(null);
+        txtId.setEnabled(false);
+        txtId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIdActionPerformed(evt);
+            }
+        });
 
         txtEtapa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -156,16 +192,7 @@ public class FasesAdmin extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setText("Id");
-
         jLabel6.setText("Estado");
-
-        btnActualizar.setText("Actualizar");
-        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnActualizarActionPerformed(evt);
-            }
-        });
 
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -173,6 +200,8 @@ public class FasesAdmin extends javax.swing.JFrame {
                 btnCancelarActionPerformed(evt);
             }
         });
+
+        cbxEncargado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar Encargado" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -182,108 +211,90 @@ public class FasesAdmin extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 8, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(23, 23, 23)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtFechaTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(35, 35, 35))
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(36, 36, 36)
-                                        .addComponent(txtEtapa, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(35, 35, 35)
-                                        .addComponent(txtEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(34, 34, 34))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSeleccionar)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
                         .addGap(18, 18, 18)
-                        .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtFechaTermino)
+                            .addComponent(txtFechaInicio)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(35, 35, 35))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(35, 35, 35)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEtapa, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
+                        .addGap(57, 57, 57)
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(radioProceso)
                             .addComponent(radioTerminado)
-                            .addComponent(radioPorHacer)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(180, 180, 180)
-                        .addComponent(btnActualizar)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(radioPorHacer))
+                        .addContainerGap(130, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(200, 200, 200))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(211, 211, 211))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnSeleccionar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtEtapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel6)
+                    .addComponent(radioPorHacer))
+                .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(16, 16, 16)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtEtapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel6)
-                            .addComponent(radioPorHacer))
-                        .addGap(2, 2, 2)
+                            .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtFechaTermino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(16, 16, 16)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel2))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txtFechaTermino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txtEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(radioProceso)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(radioTerminado)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jLabel4)
+                            .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(144, 144, 144)
-                        .addComponent(btnActualizar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))))
+                        .addComponent(radioProceso)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(radioTerminado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCrear)
-                    .addComponent(btnSeleccionar)
+                    .addComponent(btnCancelar)
                     .addComponent(btnModificar)
-                    .addComponent(btnCancelar))
-                .addContainerGap())
+                    .addComponent(btnSeleccionar))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         pack();
@@ -294,17 +305,13 @@ public class FasesAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEtapaActionPerformed
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
-        radioTerminado.setEnabled(true);
-        radioProceso.setEnabled(true);
-        radioPorHacer.setEnabled(true);
-
         int fila = tableFases.getSelectedRow();
         txtId.setText(Integer.toString((Integer) tableFases.getValueAt(fila, 0)));
         txtEtapa.setText((String) tableFases.getValueAt(fila, 1));
         txtFechaInicio.setText((String) tableFases.getValueAt(fila, 2));
         txtFechaTermino.setText((String) tableFases.getValueAt(fila, 3));
-        txtEncargado.setText((String) tableFases.getValueAt(fila, 5));
         String estado = ((String) tableFases.getValueAt(fila, 4));
+        cbxEncargado.setSelectedItem(tableFases.getValueAt(fila, 5));
         if (estado.equals("terminado")) {
             radioTerminado.setSelected(true);
 
@@ -318,12 +325,16 @@ public class FasesAdmin extends javax.swing.JFrame {
 
         }
 
+        btnCrear.setEnabled(false);
+        btnModificar.setEnabled(true);
+        btnCancelar.setEnabled(true);
+        
 
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
         if (txtEtapa.getText().equals("") || txtFechaInicio.getText().equals("") || txtFechaTermino.getText().equals("")
-                || txtEncargado.getText().equals("")) {
+                || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
         } else {
@@ -336,7 +347,7 @@ public class FasesAdmin extends javax.swing.JFrame {
                 ps.setString(1, txtEtapa.getText());
                 ps.setString(2, txtFechaInicio.getText());
                 ps.setString(3, (txtFechaTermino.getText()));
-                ps.setString(4, (txtEncargado.getText()));
+                ps.setString(4, cbxEncargado.getSelectedItem().toString());
 
                 ps.executeUpdate();
                 limpiarCampos();
@@ -354,7 +365,7 @@ public class FasesAdmin extends javax.swing.JFrame {
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         nombreTabla = "proyecto" + idProyecto.getId();
         if (txtEtapa.getText().equals("") || txtFechaInicio.getText().equals("") || txtFechaTermino.getText().equals("")
-                || txtEncargado.getText().equals("")) {
+                || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
         } else {
@@ -365,7 +376,7 @@ public class FasesAdmin extends javax.swing.JFrame {
                 ps.setString(1, txtEtapa.getText());
                 ps.setString(2, txtFechaInicio.getText());
                 ps.setString(3, (txtFechaTermino.getText()));
-                ps.setString(4, (txtEncargado.getText()));
+                ps.setString(4, (cbxEncargado.getSelectedItem().toString()));
                 ps.setString(5, txtId.getText());
 
                 ps.executeUpdate();
@@ -420,20 +431,31 @@ public class FasesAdmin extends javax.swing.JFrame {
 
         }
         limpiarCampos();
-        llenarTabla();
-        radioTerminado.setEnabled(false);
-        radioProceso.setEnabled(false);
-        radioPorHacer.setEnabled(false);
+        llenarTabla();        
+        
+        btnCrear.setEnabled(true);
+        btnSeleccionar.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnCancelar.setEnabled(false);
     }//GEN-LAST:event_btnModificarActionPerformed
 
-    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         limpiarCampos();
         llenarTabla();
-    }//GEN-LAST:event_btnActualizarActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
+        
+        btnCrear.setEnabled(true);
+        btnSeleccionar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+        btnModificar.setEnabled(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void tableFasesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableFasesMouseClicked
+        btnSeleccionar.setEnabled(true);
+    }//GEN-LAST:event_tableFasesMouseClicked
+
+    private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIdActionPerformed
 
     /**
      * @param args the command line arguments
@@ -472,24 +494,22 @@ public class FasesAdmin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnSeleccionar;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<String> cbxEncargado;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton radioPorHacer;
     private javax.swing.JRadioButton radioProceso;
     private javax.swing.JRadioButton radioTerminado;
     private javax.swing.JTable tableFases;
-    private javax.swing.JTextField txtEncargado;
     private javax.swing.JTextField txtEtapa;
     private javax.swing.JTextField txtFechaInicio;
     private javax.swing.JTextField txtFechaTermino;

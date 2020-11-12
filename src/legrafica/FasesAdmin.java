@@ -10,6 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
@@ -25,9 +28,11 @@ public class FasesAdmin extends javax.swing.JFrame {
     /**
      * Creates new form FasesAdmin
      */
-    String nombreTabla;
-    DefaultTableModel modelo = new DefaultTableModel();
-    public legrafica.Modelos.Proyectos idProyecto;
+    private String nombreTabla;
+    private DefaultTableModel modelo = new DefaultTableModel();
+    private legrafica.Modelos.Proyectos idProyecto;
+    private SimpleDateFormat dFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private Date today = new Date();
 
     public FasesAdmin(legrafica.Modelos.Proyectos parametro) {
         initComponents();
@@ -42,6 +47,8 @@ public class FasesAdmin extends javax.swing.JFrame {
         btnCancelar.setEnabled(false);
         btnSeleccionar.setEnabled(false);
         btnModificar.setEnabled(false);
+        dcInicio.setDate(today);
+        dcTermino.setDate(today);
     }
 
     private void llenarTabla() {
@@ -54,7 +61,7 @@ public class FasesAdmin extends javax.swing.JFrame {
 
                 ResultSet rs = consulta.executeQuery("Select * FROM " + nombreTabla);
                 modelo.setColumnCount(6);
-                modelo.setColumnIdentifiers(new Object[]{"Id", "Etapa", "Fecha Inicio", "Fecha Termino", "Status", "Encargado"});
+                modelo.setColumnIdentifiers(new Object[]{"Id", "Etapa", "Fecha Inicio", "Fecha Termino", "Estado", "Encargado"});
                 while (rs.next()) {
 
                     modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6)});
@@ -67,7 +74,7 @@ public class FasesAdmin extends javax.swing.JFrame {
         }
     }
     
-       private void llenarComboBox() {
+    private void llenarComboBox() {
 
         Connection con = ConnectDB.getConnection();
 
@@ -82,24 +89,19 @@ public class FasesAdmin extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     private void limpiarCampos() {
         txtId.setText("");
         txtEtapa.setText("");
-        txtFechaInicio.setText("");
-        txtFechaTermino.setText("");
+        dcInicio.setDate(today);
+        dcTermino.setDate(today);
         cbxEncargado.setSelectedIndex(0);
         radioPorHacer.setSelected(true);
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
     }
-    
-    
-    
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -108,6 +110,7 @@ public class FasesAdmin extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -121,14 +124,14 @@ public class FasesAdmin extends javax.swing.JFrame {
         radioPorHacer = new javax.swing.JRadioButton();
         txtId = new javax.swing.JTextField();
         txtEtapa = new javax.swing.JTextField();
-        txtFechaInicio = new javax.swing.JTextField();
-        txtFechaTermino = new javax.swing.JTextField();
         btnSeleccionar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         btnCancelar = new javax.swing.JButton();
         cbxEncargado = new javax.swing.JComboBox<>();
+        dcInicio = new com.toedter.calendar.JDateChooser();
+        dcTermino = new com.toedter.calendar.JDateChooser();
 
         tableFases.setModel(modelo);
         tableFases.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -149,11 +152,20 @@ public class FasesAdmin extends javax.swing.JFrame {
         buttonGroup1.add(radioTerminado);
         radioTerminado.setText("Terminado");
 
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnSeleccionar, org.jdesktop.beansbinding.ObjectProperty.create(), radioTerminado, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         buttonGroup1.add(radioProceso);
         radioProceso.setText("En Proceso");
 
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, radioTerminado, org.jdesktop.beansbinding.ObjectProperty.create(), radioProceso, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         buttonGroup1.add(radioPorHacer);
         radioPorHacer.setText("Por Hacer");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, radioProceso, org.jdesktop.beansbinding.ObjectProperty.create(), radioPorHacer, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
 
         txtId.setEditable(false);
         txtId.setUI(null);
@@ -164,6 +176,9 @@ public class FasesAdmin extends javax.swing.JFrame {
             }
         });
 
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, dcInicio, org.jdesktop.beansbinding.ObjectProperty.create(), txtEtapa, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         txtEtapa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEtapaActionPerformed(evt);
@@ -171,6 +186,10 @@ public class FasesAdmin extends javax.swing.JFrame {
         });
 
         btnSeleccionar.setText("Seleccionar Etapa");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnModificar, org.jdesktop.beansbinding.ObjectProperty.create(), btnSeleccionar, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSeleccionarActionPerformed(evt);
@@ -186,6 +205,10 @@ public class FasesAdmin extends javax.swing.JFrame {
         });
 
         btnModificar.setText("Modificar Etapa");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnCancelar, org.jdesktop.beansbinding.ObjectProperty.create(), btnModificar, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnModificarActionPerformed(evt);
@@ -195,6 +218,10 @@ public class FasesAdmin extends javax.swing.JFrame {
         jLabel6.setText("Estado");
 
         btnCancelar.setText("Cancelar");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnCrear, org.jdesktop.beansbinding.ObjectProperty.create(), btnCancelar, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
@@ -202,6 +229,15 @@ public class FasesAdmin extends javax.swing.JFrame {
         });
 
         cbxEncargado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar Encargado" }));
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, radioPorHacer, org.jdesktop.beansbinding.ObjectProperty.create(), cbxEncargado, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, dcTermino, org.jdesktop.beansbinding.ObjectProperty.create(), dcInicio, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, cbxEncargado, org.jdesktop.beansbinding.ObjectProperty.create(), dcTermino, org.jdesktop.beansbinding.BeanProperty.create("nextFocusableComponent"));
+        bindingGroup.addBinding(binding);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -218,9 +254,7 @@ public class FasesAdmin extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addComponent(jLabel2))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtFechaTermino)
-                            .addComponent(txtFechaInicio)))
+                        .addComponent(dcTermino, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -228,9 +262,10 @@ public class FasesAdmin extends javax.swing.JFrame {
                                 .addGap(35, 35, 35))
                             .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(35, 35, 35)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEtapa, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtEtapa, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dcInicio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(57, 57, 57)
@@ -269,15 +304,15 @@ public class FasesAdmin extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                        .addGap(7, 7, 7)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(dcInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtFechaTermino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(dcTermino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -294,8 +329,10 @@ public class FasesAdmin extends javax.swing.JFrame {
                     .addComponent(btnCancelar)
                     .addComponent(btnModificar)
                     .addComponent(btnSeleccionar))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -306,24 +343,26 @@ public class FasesAdmin extends javax.swing.JFrame {
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
         int fila = tableFases.getSelectedRow();
+        
         txtId.setText(Integer.toString((Integer) tableFases.getValueAt(fila, 0)));
-        txtEtapa.setText((String) tableFases.getValueAt(fila, 1));
-        txtFechaInicio.setText((String) tableFases.getValueAt(fila, 2));
-        txtFechaTermino.setText((String) tableFases.getValueAt(fila, 3));
+        txtEtapa.setText((String) tableFases.getValueAt(fila, 1));        
+        String fechaI = (String) tableFases.getValueAt(fila, 2);
+        String fechaT = (String) tableFases.getValueAt(fila, 3);
         String estado = ((String) tableFases.getValueAt(fila, 4));
         cbxEncargado.setSelectedItem(tableFases.getValueAt(fila, 5));
-        if (estado.equals("terminado")) {
-            radioTerminado.setSelected(true);
-
+        
+        try {
+            Date fechaInicio = (Date) dFormat.parse(fechaI);
+            Date fechaTermino = (Date) dFormat.parse(fechaT);
+            dcInicio.setDate(fechaInicio);
+            dcTermino.setDate(fechaTermino);
+        } catch (ParseException ex) {
+            Logger.getLogger(FasesAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (estado.equals("en_proceso")) {
-            radioProceso.setSelected(true);
-
-        }
-        if (estado.equals("por_hacer")) {
-            radioPorHacer.setSelected(true);
-
-        }
+                
+        if (estado.equals("terminado")) radioTerminado.setSelected(true);
+        if (estado.equals("en_proceso")) radioProceso.setSelected(true);
+        if (estado.equals("por_hacer"))radioPorHacer.setSelected(true);
 
         btnCrear.setEnabled(false);
         btnModificar.setEnabled(true);
@@ -333,21 +372,43 @@ public class FasesAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
-        if (txtEtapa.getText().equals("") || txtFechaInicio.getText().equals("") || txtFechaTermino.getText().equals("")
-                || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
-            JDialog frame = new JDialog();
+        JDialog frame = new JDialog();
+        String fechaInicio = dFormat.format(dcInicio.getDate());
+        String fechaTermino = dFormat.format(dcTermino.getDate());
+        Date fechaI = null;
+        Date fechaT = null;
+        try {
+            fechaI = (Date) dFormat.parse(fechaInicio);
+            fechaT = (Date) dFormat.parse(fechaTermino);
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(FasesAdmin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+        String estado = "por_hacer";
+        
+        if(radioPorHacer.isSelected()) estado = "por_hacer";
+        if(radioProceso.isSelected()) estado = "en_proceso";
+        if(radioTerminado.isSelected()) estado = "terminado";
+        
+        if (txtEtapa.getText().equals("") || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado") ) {
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
+        }else if(fechaT.before(fechaI)){
+            JOptionPane.showMessageDialog(frame, "La fecha de inicio no puede ser mayor a la fecha de termino");
         } else {
             try {
                 nombreTabla = "proyecto" + idProyecto.getId();
                 Connection con = ConnectDB.getConnection();
                 String sql = "INSERT INTO `" + nombreTabla + "` (`id`, `etapa`, `fecha_inicio`, `fecha_termino`, `status`, "
-                        + "`encargado`) VALUES (NULL, ?, ?, ?, 'por_hacer', ?);";
+                        + "`encargado`) VALUES (NULL, ?, ?, ?, ?, ?);";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtEtapa.getText());
-                ps.setString(2, txtFechaInicio.getText());
-                ps.setString(3, (txtFechaTermino.getText()));
-                ps.setString(4, cbxEncargado.getSelectedItem().toString());
+                ps.setString(2, fechaInicio);
+                ps.setString(3, fechaTermino);
+                ps.setString(4, estado);
+                ps.setString(5, cbxEncargado.getSelectedItem().toString());
 
                 ps.executeUpdate();
                 limpiarCampos();
@@ -357,86 +418,62 @@ public class FasesAdmin extends javax.swing.JFrame {
             }
 
         }
-        radioTerminado.setEnabled(false);
-        radioProceso.setEnabled(false);
-        radioPorHacer.setEnabled(false);
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        JDialog frame = new JDialog();
         nombreTabla = "proyecto" + idProyecto.getId();
-        if (txtEtapa.getText().equals("") || txtFechaInicio.getText().equals("") || txtFechaTermino.getText().equals("")
-                || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
-            JDialog frame = new JDialog();
+        
+        String fechaInicio = dFormat.format(dcInicio.getDate());
+        String fechaTermino = dFormat.format(dcTermino.getDate());
+        
+        Date fechaI = null;
+        Date fechaT = null;
+        try {
+            fechaI = (Date) dFormat.parse(fechaInicio);
+            fechaT = (Date) dFormat.parse(fechaTermino);
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(FasesAdmin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        String estado = "por_hacer";
+        
+        if(radioPorHacer.isSelected()) estado = "por_hacer";
+        if(radioProceso.isSelected()) estado = "en_proceso";
+        if(radioTerminado.isSelected()) estado = "terminado";
+        
+        if (txtEtapa.getText().equals("") || cbxEncargado.getSelectedItem().toString().equals("Seleccionar Encargado")) {
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
+        }else if(fechaT.before(fechaI)){
+            JOptionPane.showMessageDialog(frame, "La fecha de inicio no puede ser mayor a la fecha de termino");
         } else {
             try {
                 Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `" + nombreTabla + "` SET `etapa` = ?, `fecha_inicio` = ?, `fecha_termino` = ?, `encargado` = ? WHERE `" + nombreTabla + "`.`id` = ?; ";
+                String sql = "UPDATE `" + nombreTabla + "` SET `etapa` = ?, `fecha_inicio` = ?, `fecha_termino` = ?, `status` = ?, `encargado` = ? WHERE `" + nombreTabla + "`.`id` = ?; ";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtEtapa.getText());
-                ps.setString(2, txtFechaInicio.getText());
-                ps.setString(3, (txtFechaTermino.getText()));
-                ps.setString(4, (cbxEncargado.getSelectedItem().toString()));
-                ps.setString(5, txtId.getText());
+                ps.setString(2, fechaInicio);
+                ps.setString(3, fechaTermino);
+                ps.setString(4, estado);
+                ps.setString(5, (cbxEncargado.getSelectedItem().toString()));
+                ps.setString(6, txtId.getText());
 
                 ps.executeUpdate();
+                
+                limpiarCampos();
+                llenarTabla();        
+
+                btnCrear.setEnabled(true);
+                btnSeleccionar.setEnabled(false);
+                btnModificar.setEnabled(false);
+                btnCancelar.setEnabled(false);
 
             } catch (SQLException ex) {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        if (radioTerminado.isSelected() == true) {
-
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `" + nombreTabla + "` SET `status` = 'terminado' WHERE `" + nombreTabla + "`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1, txtId.getText());
-                ps.executeUpdate();
-
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        if (radioProceso.isSelected() == true) {
-
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `" + nombreTabla + "` SET `status` = 'en_proceso' WHERE `" + nombreTabla + "`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1, txtId.getText());
-                ps.executeUpdate();
-
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        if (radioPorHacer.isSelected() == true) {
-
-            try {
-                Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `" + nombreTabla + "` SET `status` = 'por_hacer' WHERE `" + nombreTabla + "`.`id` = ?; ";
-                PreparedStatement ps;
-                ps = con.prepareStatement(sql);
-                ps.setString(1, txtId.getText());
-                ps.executeUpdate();
-
-            } catch (SQLException ex) {
-                Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        limpiarCampos();
-        llenarTabla();        
-        
-        btnCrear.setEnabled(true);
-        btnSeleccionar.setEnabled(false);
-        btnModificar.setEnabled(false);
-        btnCancelar.setEnabled(false);
+     
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -500,6 +537,8 @@ public class FasesAdmin extends javax.swing.JFrame {
     private javax.swing.JButton btnSeleccionar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cbxEncargado;
+    private com.toedter.calendar.JDateChooser dcInicio;
+    private com.toedter.calendar.JDateChooser dcTermino;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -511,8 +550,7 @@ public class FasesAdmin extends javax.swing.JFrame {
     private javax.swing.JRadioButton radioTerminado;
     private javax.swing.JTable tableFases;
     private javax.swing.JTextField txtEtapa;
-    private javax.swing.JTextField txtFechaInicio;
-    private javax.swing.JTextField txtFechaTermino;
     private javax.swing.JTextField txtId;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

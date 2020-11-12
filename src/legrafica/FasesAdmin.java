@@ -25,21 +25,21 @@ public class FasesAdmin extends javax.swing.JFrame {
     /**
      * Creates new form FasesAdmin
      */
-    int idProyecto;
     String nombreTabla;
     DefaultTableModel modelo = new DefaultTableModel();
+    public legrafica.Modelos.Proyectos idProyecto;
 
-    public FasesAdmin() {
+    public FasesAdmin(legrafica.Modelos.Proyectos parametro) {
         initComponents();
+        idProyecto = parametro;
         this.setLocationRelativeTo(null);
+        radioPorHacer.setSelected(true);
+        setTitle("Cronograma");
         llenarTabla();
-        jRadioButton1.setEnabled(false);
-        jRadioButton2.setEnabled(false);
-        jRadioButton3.setEnabled(false);
     }
 
     private void llenarTabla() {
-        nombreTabla = "proyecto" + idProyecto;
+        nombreTabla = "proyecto" + idProyecto.getId();
         Connection con = ConnectDB.getConnection();
         Statement consulta = null;
         if (con != null) {
@@ -47,6 +47,7 @@ public class FasesAdmin extends javax.swing.JFrame {
                 consulta = con.createStatement();
 
                 ResultSet rs = consulta.executeQuery("Select * FROM " + nombreTabla);
+                System.out.println(nombreTabla);
                 modelo.setColumnCount(6);
                 modelo.setColumnIdentifiers(new Object[]{"Id", "Etapa", "Fecha Inicio", "Fecha Termino", "Status", "Encargado"});
                 while (rs.next()) {
@@ -55,18 +56,19 @@ public class FasesAdmin extends javax.swing.JFrame {
 
                 }
             } catch (SQLException ex) {
+                System.out.println("no se pudo suckker");
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
     private void limpiarCampos() {
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");
-        jTextField4.setText("");
-        jTextField5.setText("");
-        jRadioButton1.setSelected(true);
+        txtId.setText("");
+        txtEtapa.setText("");
+        txtFechaInicio.setText("");
+        txtFechaTermino.setText("");
+        txtEncargado.setText("");
+        radioPorHacer.setSelected(true);
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
@@ -83,29 +85,29 @@ public class FasesAdmin extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableFases = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        radioTerminado = new javax.swing.JRadioButton();
+        radioProceso = new javax.swing.JRadioButton();
+        radioPorHacer = new javax.swing.JRadioButton();
+        txtId = new javax.swing.JTextField();
+        txtEtapa = new javax.swing.JTextField();
+        txtFechaInicio = new javax.swing.JTextField();
+        txtFechaTermino = new javax.swing.JTextField();
         btnSeleccionar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtEncargado = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
-        jTable1.setModel(modelo);
-        jScrollPane1.setViewportView(jTable1);
+        tableFases.setModel(modelo);
+        jScrollPane1.setViewportView(tableFases);
 
         jLabel1.setText("Etapa");
 
@@ -115,20 +117,20 @@ public class FasesAdmin extends javax.swing.JFrame {
 
         jLabel4.setText("Encargado");
 
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("Terminado");
+        buttonGroup1.add(radioTerminado);
+        radioTerminado.setText("Terminado");
 
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("En Proceso");
+        buttonGroup1.add(radioProceso);
+        radioProceso.setText("En Proceso");
 
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Por Hacer");
+        buttonGroup1.add(radioPorHacer);
+        radioPorHacer.setText("Por Hacer");
 
-        jTextField1.setEditable(false);
+        txtId.setEditable(false);
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        txtEtapa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                txtEtapaActionPerformed(evt);
             }
         });
 
@@ -158,10 +160,10 @@ public class FasesAdmin extends javax.swing.JFrame {
 
         jLabel6.setText("Estado");
 
-        jButton4.setText("Actualizar");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnActualizarActionPerformed(evt);
             }
         });
 
@@ -190,8 +192,8 @@ public class FasesAdmin extends javax.swing.JFrame {
                                     .addComponent(jLabel2))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(txtFechaTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(layout.createSequentialGroup()
@@ -201,10 +203,10 @@ public class FasesAdmin extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(36, 36, 36)
-                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtEtapa, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(35, 35, 35)
-                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                        .addComponent(txtEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                         .addGap(34, 34, 34))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -215,68 +217,66 @@ public class FasesAdmin extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(29, 29, 29)
-                                .addComponent(jButton4))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton2)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jRadioButton3))))
+                            .addComponent(radioProceso)
+                            .addComponent(radioTerminado)
+                            .addComponent(radioPorHacer)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(180, 180, 180)
+                        .addComponent(btnActualizar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(211, 211, 211))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1)
-                        .addComponent(jLabel6))
-                    .addComponent(jRadioButton1))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                            .addComponent(txtEtapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel6)
+                            .addComponent(radioPorHacer))
+                        .addGap(2, 2, 2)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(90, 90, 90)
-                                .addComponent(jButton4))
+                                .addGap(16, 16, 16)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtFechaTermino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(radioProceso)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton3)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                                .addComponent(radioTerminado)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(144, 144, 144)
+                        .addComponent(btnActualizar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCrear)
@@ -289,32 +289,32 @@ public class FasesAdmin extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtEtapaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEtapaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txtEtapaActionPerformed
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
-        jRadioButton1.setEnabled(true);
-        jRadioButton2.setEnabled(true);
-        jRadioButton3.setEnabled(true);
+        radioTerminado.setEnabled(true);
+        radioProceso.setEnabled(true);
+        radioPorHacer.setEnabled(true);
 
-        int fila = jTable1.getSelectedRow();
-        jTextField1.setText(Integer.toString((Integer) jTable1.getValueAt(fila, 0)));
-        jTextField2.setText((String) jTable1.getValueAt(fila, 1));
-        jTextField3.setText((String) jTable1.getValueAt(fila, 2));
-        jTextField4.setText((String) jTable1.getValueAt(fila, 3));
-        jTextField5.setText((String) jTable1.getValueAt(fila, 5));
-        String estado = ((String) jTable1.getValueAt(fila, 4));
+        int fila = tableFases.getSelectedRow();
+        txtId.setText(Integer.toString((Integer) tableFases.getValueAt(fila, 0)));
+        txtEtapa.setText((String) tableFases.getValueAt(fila, 1));
+        txtFechaInicio.setText((String) tableFases.getValueAt(fila, 2));
+        txtFechaTermino.setText((String) tableFases.getValueAt(fila, 3));
+        txtEncargado.setText((String) tableFases.getValueAt(fila, 5));
+        String estado = ((String) tableFases.getValueAt(fila, 4));
         if (estado.equals("terminado")) {
-            jRadioButton1.setSelected(true);
+            radioTerminado.setSelected(true);
 
         }
         if (estado.equals("en_proceso")) {
-            jRadioButton2.setSelected(true);
+            radioProceso.setSelected(true);
 
         }
         if (estado.equals("por_hacer")) {
-            jRadioButton3.setSelected(true);
+            radioPorHacer.setSelected(true);
 
         }
 
@@ -322,21 +322,21 @@ public class FasesAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
-        if (jTextField2.getText().equals("") || jTextField3.getText().equals("") || jTextField4.getText().equals("")
-                || jTextField5.getText().equals("")) {
+        if (txtEtapa.getText().equals("") || txtFechaInicio.getText().equals("") || txtFechaTermino.getText().equals("")
+                || txtEncargado.getText().equals("")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
         } else {
             try {
-                nombreTabla = "proyecto" + idProyecto;
+                nombreTabla = "proyecto" + idProyecto.getId();
                 Connection con = ConnectDB.getConnection();
                 String sql = "INSERT INTO `" + nombreTabla + "` (`id`, `etapa`, `fecha_inicio`, `fecha_termino`, `status`, "
                         + "`encargado`) VALUES (NULL, ?, ?, ?, 'por_hacer', ?);";
                 PreparedStatement ps = con.prepareStatement(sql);
-                ps.setString(1, jTextField2.getText());
-                ps.setString(2, jTextField3.getText());
-                ps.setString(3, (jTextField4.getText()));
-                ps.setString(4, (jTextField5.getText()));
+                ps.setString(1, txtEtapa.getText());
+                ps.setString(2, txtFechaInicio.getText());
+                ps.setString(3, (txtFechaTermino.getText()));
+                ps.setString(4, (txtEncargado.getText()));
 
                 ps.executeUpdate();
                 limpiarCampos();
@@ -346,15 +346,15 @@ public class FasesAdmin extends javax.swing.JFrame {
             }
 
         }
-        jRadioButton1.setEnabled(false);
-        jRadioButton2.setEnabled(false);
-        jRadioButton3.setEnabled(false);
+        radioTerminado.setEnabled(false);
+        radioProceso.setEnabled(false);
+        radioPorHacer.setEnabled(false);
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        nombreTabla = "proyecto" + idProyecto;
-        if (jTextField2.getText().equals("") || jTextField3.getText().equals("") || jTextField4.getText().equals("")
-                || jTextField5.getText().equals("")) {
+        nombreTabla = "proyecto" + idProyecto.getId();
+        if (txtEtapa.getText().equals("") || txtFechaInicio.getText().equals("") || txtFechaTermino.getText().equals("")
+                || txtEncargado.getText().equals("")) {
             JDialog frame = new JDialog();
             JOptionPane.showMessageDialog(frame, "Favor de llenar todos los campos para continuar.");
         } else {
@@ -362,11 +362,11 @@ public class FasesAdmin extends javax.swing.JFrame {
                 Connection con = ConnectDB.getConnection();
                 String sql = "UPDATE `" + nombreTabla + "` SET `etapa` = ?, `fecha_inicio` = ?, `fecha_termino` = ?, `encargado` = ? WHERE `" + nombreTabla + "`.`id` = ?; ";
                 PreparedStatement ps = con.prepareStatement(sql);
-                ps.setString(1, jTextField2.getText());
-                ps.setString(2, jTextField3.getText());
-                ps.setString(3, (jTextField4.getText()));
-                ps.setString(4, (jTextField5.getText()));
-                ps.setString(5, jTextField1.getText());
+                ps.setString(1, txtEtapa.getText());
+                ps.setString(2, txtFechaInicio.getText());
+                ps.setString(3, (txtFechaTermino.getText()));
+                ps.setString(4, (txtEncargado.getText()));
+                ps.setString(5, txtId.getText());
 
                 ps.executeUpdate();
 
@@ -374,14 +374,14 @@ public class FasesAdmin extends javax.swing.JFrame {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        if (jRadioButton1.isSelected() == true) {
+        if (radioTerminado.isSelected() == true) {
 
             try {
                 Connection con = ConnectDB.getConnection();
                 String sql = "UPDATE `" + nombreTabla + "` SET `status` = 'terminado' WHERE `" + nombreTabla + "`.`id` = ?; ";
                 PreparedStatement ps;
                 ps = con.prepareStatement(sql);
-                ps.setString(1, jTextField1.getText());
+                ps.setString(1, txtId.getText());
                 ps.executeUpdate();
 
             } catch (SQLException ex) {
@@ -389,14 +389,14 @@ public class FasesAdmin extends javax.swing.JFrame {
             }
 
         }
-        if (jRadioButton2.isSelected() == true) {
+        if (radioProceso.isSelected() == true) {
 
             try {
                 Connection con = ConnectDB.getConnection();
                 String sql = "UPDATE `" + nombreTabla + "` SET `status` = 'en_proceso' WHERE `" + nombreTabla + "`.`id` = ?; ";
                 PreparedStatement ps;
                 ps = con.prepareStatement(sql);
-                ps.setString(1, jTextField1.getText());
+                ps.setString(1, txtId.getText());
                 ps.executeUpdate();
 
             } catch (SQLException ex) {
@@ -404,14 +404,14 @@ public class FasesAdmin extends javax.swing.JFrame {
             }
 
         }
-        if (jRadioButton3.isSelected() == true) {
+        if (radioPorHacer.isSelected() == true) {
 
             try {
                 Connection con = ConnectDB.getConnection();
                 String sql = "UPDATE `" + nombreTabla + "` SET `status` = 'por_hacer' WHERE `" + nombreTabla + "`.`id` = ?; ";
                 PreparedStatement ps;
                 ps = con.prepareStatement(sql);
-                ps.setString(1, jTextField1.getText());
+                ps.setString(1, txtId.getText());
                 ps.executeUpdate();
 
             } catch (SQLException ex) {
@@ -421,15 +421,15 @@ public class FasesAdmin extends javax.swing.JFrame {
         }
         limpiarCampos();
         llenarTabla();
-        jRadioButton1.setEnabled(false);
-        jRadioButton2.setEnabled(false);
-        jRadioButton3.setEnabled(false);
+        radioTerminado.setEnabled(false);
+        radioProceso.setEnabled(false);
+        radioPorHacer.setEnabled(false);
     }//GEN-LAST:event_btnModificarActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         limpiarCampos();
         llenarTabla();
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
@@ -465,34 +465,34 @@ public class FasesAdmin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FasesAdmin().setVisible(true);
+                //new FasesAdmin().setVisible(true);
 
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnSeleccionar;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JRadioButton radioPorHacer;
+    private javax.swing.JRadioButton radioProceso;
+    private javax.swing.JRadioButton radioTerminado;
+    private javax.swing.JTable tableFases;
+    private javax.swing.JTextField txtEncargado;
+    private javax.swing.JTextField txtEtapa;
+    private javax.swing.JTextField txtFechaInicio;
+    private javax.swing.JTextField txtFechaTermino;
+    private javax.swing.JTextField txtId;
     // End of variables declaration//GEN-END:variables
 }

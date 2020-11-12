@@ -28,7 +28,8 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     /**
      * Creates new form ProyectosAdmin
      */
-    DefaultTableModel modelo = new DefaultTableModel();
+    private DefaultTableModel modelo = new DefaultTableModel();
+
 
     public ProyectosAdmin() {
         initComponents();
@@ -487,6 +488,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
         int fila = jTable1.getSelectedRow();
+
         txtId.setText(Integer.toString((Integer) jTable1.getValueAt(fila, 0)));
         txtNombre.setText((String) jTable1.getValueAt(fila, 1));
         cbxCliente.setSelectedItem(jTable1.getValueAt(fila, 2));
@@ -665,9 +667,9 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 //        } catch (SQLException ex) {
 //            Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        FasesAdmin fases = new FasesAdmin();
+        //FasesAdmin fases = new FasesAdmin();
         //fases.idProyecto = idProyecto;
-        fases.setVisible(true);
+        //fases.setVisible(true);
 
 //        try {
 //            Connection con = ConnectDB.getConnection();
@@ -684,9 +686,18 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearCronoActionPerformed
 
     private void btnAbrirCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirCronoActionPerformed
-        int idProyecto = (Integer.parseInt(txtId.getText()));
-        FasesAdmin fases = new FasesAdmin();
-        fases.idProyecto = idProyecto;
+        //
+       int esteProyecto = (Integer.parseInt(txtId.getText()));
+//        idProyecto.setId(esteProyecto);
+//        //fases.idProyecto = idProyecto;
+//        System.out.println(idProyecto.getId());
+//        System.out.println("lajshd"  + esteProyecto);
+
+        legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
+        idProyecto.setId(esteProyecto);
+        FasesAdmin fases = new FasesAdmin(idProyecto);
+
+        //fases.idProyecto = idProyecto;
         fases.setVisible(true);
 
     }//GEN-LAST:event_btnAbrirCronoActionPerformed

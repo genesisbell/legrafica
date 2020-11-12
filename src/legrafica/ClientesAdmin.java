@@ -498,9 +498,9 @@ public class ClientesAdmin extends javax.swing.JFrame {
 
     private void btnAbrirProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirProyectoActionPerformed
         int idProyecto=Integer.parseInt(txtIdProyecto.getText());
-        FasesAdmin fases =new FasesAdmin();
-        fases.idProyecto=idProyecto;
-        fases.setVisible(true);
+        //FasesAdmin fases =new FasesAdmin();
+        //fases.idProyecto=idProyecto;
+        //fases.setVisible(true);
     }//GEN-LAST:event_btnAbrirProyectoActionPerformed
 
     private void txtIdProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdProyectoActionPerformed

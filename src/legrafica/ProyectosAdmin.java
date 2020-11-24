@@ -54,19 +54,14 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         if (con != null) {
             try {
                 consulta = con.createStatement();
-                String nulo = "ninguno";
                 ResultSet rs = consulta.executeQuery("Select * FROM proyecto");
-                modelo.setColumnCount(7);
-                modelo.setColumnIdentifiers(new Object[]{"ID", "Nombre", "Cliente", "Categoria", "Encargado", "Estado", "Cronograma"});
+                modelo.setColumnCount(6);
+                modelo.setColumnIdentifiers(new Object[]{"ID", "Nombre", "Cliente", "Categoria", "Encargado", "Estado"});
 
                 while (rs.next()) {
-                    int idCronograma = rs.getInt(7);
-                    if (idCronograma == 0) {
-                        modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), 0});
-                    } else {
-                        modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)});
-                    }
-
+                    
+                    modelo.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6)});
+                 
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
@@ -114,6 +109,19 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         }
     }
 
+    public static boolean tableExist(Connection conn, String tableName) throws SQLException {
+        boolean tExists = false;
+        try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
+            while (rs.next()) { 
+                String tName = rs.getString("TABLE_NAME");
+                if (tName != null && tName.equals(tableName)) {
+                    tExists = true;
+                    break;
+                }
+            }
+        }
+        return tExists;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -492,11 +500,9 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         txtId.setText(Integer.toString((Integer) jTable1.getValueAt(fila, 0)));
         txtNombre.setText((String) jTable1.getValueAt(fila, 1));
         cbxCliente.setSelectedItem(jTable1.getValueAt(fila, 2));
-
         String categoria = ((String) jTable1.getValueAt(fila, 3));
         cbxEncargado.setSelectedItem(jTable1.getValueAt(fila, 4));
         String estado = ((String) jTable1.getValueAt(fila, 5));
-        int crono = Integer.parseInt(jTable1.getValueAt(fila, 6).toString());
 
         switch (categoria) {
             case "pagina_web":
@@ -552,14 +558,6 @@ public class ProyectosAdmin extends javax.swing.JFrame {
             default:
                 radioPorHacer.setSelected(true);
                 break;
-        }
-
-        if (crono == 0) {
-            btnCrearCrono.setEnabled(true);
-            btnAbrirCrono.setEnabled(false);
-        } else {
-            btnCrearCrono.setEnabled(false);
-            btnAbrirCrono.setEnabled(true);
         }
 
         btnModificar.setEnabled(true);
@@ -649,27 +647,53 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnCrearCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearCronoActionPerformed
-//        int idProyecto = (Integer.parseInt(txtId.getText()));
-//        String nombreTabla = "crono_proyecto_" + idProyecto;
-//        try {
-//            Connection con = ConnectDB.getConnection();
-//            String sql = "CREATE TABLE `legrafica`.`" + nombreTabla + "` ( `id` INT(11)"
-//                    + " NOT NULL AUTO_INCREMENT , `etapa` VARCHAR(50) NOT NULL , "
-//                    + "`fecha_inicio` VARCHAR(20) NOT NULL , `fecha_termino` VARCHAR(20) "
-//                    + "NOT NULL , `status` ENUM('terminado','en_proceso','por_hacer') "
-//                    + "NOT NULL , `encargado` VARCHAR(50) NOT NULL , PRIMARY KEY (`id`)) "
-//                    + "ENGINE = InnoDB;";
-//            PreparedStatement ps;
-//            ps = con.prepareStatement(sql);
-//
-//            ps.executeUpdate();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        //FasesAdmin fases = new FasesAdmin();
-        //fases.idProyecto = idProyecto;
-        //fases.setVisible(true);
+        int esteProyecto = (Integer.parseInt(txtId.getText()));
+        legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
+        idProyecto.setId(esteProyecto);
 
+        String nombreTabla = "proyecto" + esteProyecto;
+        try {
+            Connection con = ConnectDB.getConnection();
+            if(tableExist(con, nombreTabla)){
+                FasesAdmin fases = new FasesAdmin(idProyecto);
+                fases.setVisible(true);
+            }else{
+                String sql = "CREATE TABLE `legrafica`.`" + nombreTabla + "` ( `id` INT(11)"
+                    + " NOT NULL AUTO_INCREMENT , `etapa` VARCHAR(50) NOT NULL , "
+                    + "`fecha_inicio` VARCHAR(20) NOT NULL , `fecha_termino` VARCHAR(20) "
+                    + "NOT NULL , `status` ENUM('terminado','en_proceso','por_hacer') "
+                    + "NOT NULL , `encargado` VARCHAR(50) NOT NULL , PRIMARY KEY (`id`)) "
+                    + "ENGINE = InnoDB;";
+                    //+ "ALTER TABLE `cronograma` ADD FOREIGN KEY (`admin`) REFERENCES `admin` (`id`);"; ////ojooo
+//                String sql = "CREATE TABLE `cronograma` (\n" +
+//                    "  `id` int PRIMARY KEY AUTO_INCREMENT,\n" +
+//                    "  `etapa` varchar(50),\n" +
+//                    "  `fecha_inicio` datetime(now),\n" +
+//                    "  `fecha_termino` datetime,\n" +
+//                    "  `status` ENUM ('terminado', 'en_proceso', 'por_hacer'),\n" +
+//                    "  `admin` int\n" +
+//                    ");";
+                PreparedStatement ps;
+                ps = con.prepareStatement(sql);
+//                
+//                String update = "UPDATE `proyecto` SET `cronograma` = ? WHERE `proyecto`.`id` = ?; ";
+//                PreparedStatement psUpdate = con.prepareStatement(update);
+//                psUpdate.setString(1, "3");
+//                psUpdate.setString(2, txtId.getText());
+
+                ps.executeUpdate();
+                //psUpdate.executeUpdate();
+                FasesAdmin fases = new FasesAdmin(idProyecto);
+                fases.setVisible(true);
+            }
+               
+            
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     ;
+//
 //        try {
 //            Connection con = ConnectDB.getConnection();
 //            String sql = "UPDATE `proyecto` SET `cronograma` = ? WHERE `proyecto`.`id` = ?;  ";
@@ -683,16 +707,6 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 //        }
 
     }//GEN-LAST:event_btnCrearCronoActionPerformed
-
-    private void btnAbrirCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirCronoActionPerformed
-        int esteProyecto = (Integer.parseInt(txtId.getText()));
-
-        legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
-        idProyecto.setId(esteProyecto);
-        FasesAdmin fases = new FasesAdmin(idProyecto);
-        fases.setVisible(true);
-
-    }//GEN-LAST:event_btnAbrirCronoActionPerformed
 
     private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
         // TODO add your handling code here:
@@ -713,6 +727,14 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         btnCancelar.setEnabled(false);
 
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnAbrirCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirCronoActionPerformed
+        int esteProyecto = (Integer.parseInt(txtId.getText()));
+        legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
+        idProyecto.setId(esteProyecto);
+        FasesAdmin fases = new FasesAdmin(idProyecto);
+        fases.setVisible(true);
+    }//GEN-LAST:event_btnAbrirCronoActionPerformed
 
     /**
      * @param args the command line arguments

@@ -37,13 +37,14 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         setTitle("Proyectos");
         llenarTabla();
         llenarComboBox();
-
+        
+        
         radioPorHacer.setSelected(true);
         radioPaginaWeb.setSelected(true);
         btnSeleccionar.setEnabled(false);
         btnModificar.setEnabled(false);
-        btnAbrirCrono.setEnabled(false);
         btnCancelar.setEnabled(false);
+        btnCrono.setEnabled(false);
 
     }
 
@@ -146,8 +147,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         btnCrearProyecto = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
         btnSeleccionar = new javax.swing.JButton();
-        btnCrearCrono = new javax.swing.JButton();
-        btnAbrirCrono = new javax.swing.JButton();
+        btnCrono = new javax.swing.JButton();
         radioAppTienda = new javax.swing.JRadioButton();
         radioRedes = new javax.swing.JRadioButton();
         radioGoogle = new javax.swing.JRadioButton();
@@ -220,17 +220,10 @@ public class ProyectosAdmin extends javax.swing.JFrame {
             }
         });
 
-        btnCrearCrono.setText("Crear Cronograma");
-        btnCrearCrono.addActionListener(new java.awt.event.ActionListener() {
+        btnCrono.setText("Cronograma");
+        btnCrono.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCrearCronoActionPerformed(evt);
-            }
-        });
-
-        btnAbrirCrono.setText("Abrir Cronograma");
-        btnAbrirCrono.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAbrirCronoActionPerformed(evt);
+                btnCronoActionPerformed(evt);
             }
         });
 
@@ -299,19 +292,22 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                             .addComponent(jLabel5))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbxCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(34, 34, 34)
-                                .addComponent(jLabel4))
-                            .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(radioProceso)
-                            .addComponent(radioPorHacer)
-                            .addComponent(radioTerminado))
-                        .addGap(69, 69, 69)
-                        .addComponent(jLabel2)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cbxCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(34, 34, 34)
+                                        .addComponent(jLabel4))
+                                    .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(radioProceso)
+                                    .addComponent(radioPorHacer)
+                                    .addComponent(radioTerminado))
+                                .addGap(69, 69, 69)
+                                .addComponent(jLabel2))
+                            .addComponent(btnCrono, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(radioRedes)
@@ -322,12 +318,6 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                             .addComponent(radioGoogle)
                             .addComponent(radioTiendaLinea)
                             .addComponent(radioBranding)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(btnAbrirCrono, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnCrearCrono)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSeleccionar)
@@ -366,11 +356,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                             .addComponent(cbxEncargado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnAbrirCrono)
-                            .addComponent(btnCrearCrono))
-                        .addGap(62, 62, 62))
+                        .addGap(112, 112, 112))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -400,8 +386,10 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioBranding)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioRedes)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(radioRedes)
+                            .addComponent(btnCrono))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCrearProyecto)
                     .addComponent(btnModificar)
@@ -563,6 +551,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         btnModificar.setEnabled(true);
         btnCancelar.setEnabled(true);
         btnCrearProyecto.setEnabled(false);
+        btnCrono.setEnabled(true);
 
 
     }//GEN-LAST:event_btnSeleccionarActionPerformed
@@ -629,9 +618,8 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                 ps.executeUpdate();
 
                 btnCrearProyecto.setEnabled(true);
-                btnCrearCrono.setEnabled(true);
-
-                btnAbrirCrono.setEnabled(false);
+                
+                btnCrono.setEnabled(false);
                 btnSeleccionar.setEnabled(false);
                 btnModificar.setEnabled(false);
                 btnCancelar.setEnabled(false);
@@ -646,7 +634,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnModificarActionPerformed
 
-    private void btnCrearCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearCronoActionPerformed
+    private void btnCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCronoActionPerformed
         int esteProyecto = (Integer.parseInt(txtId.getText()));
         legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
         idProyecto.setId(esteProyecto);
@@ -706,7 +694,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 //            Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-    }//GEN-LAST:event_btnCrearCronoActionPerformed
+    }//GEN-LAST:event_btnCronoActionPerformed
 
     private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
         // TODO add your handling code here:
@@ -720,21 +708,12 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         limpiarCampos();
         llenarTabla();
         btnCrearProyecto.setEnabled(true);
-        btnCrearCrono.setEnabled(true);
+        btnCrono.setEnabled(false);
         btnSeleccionar.setEnabled(false);
         btnModificar.setEnabled(false);
-        btnAbrirCrono.setEnabled(false);
         btnCancelar.setEnabled(false);
 
     }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void btnAbrirCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirCronoActionPerformed
-        int esteProyecto = (Integer.parseInt(txtId.getText()));
-        legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
-        idProyecto.setId(esteProyecto);
-        FasesAdmin fases = new FasesAdmin(idProyecto);
-        fases.setVisible(true);
-    }//GEN-LAST:event_btnAbrirCronoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -772,10 +751,9 @@ public class ProyectosAdmin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAbrirCrono;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCrearCrono;
     private javax.swing.JButton btnCrearProyecto;
+    private javax.swing.JButton btnCrono;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnSeleccionar;
     private javax.swing.ButtonGroup buttonGroup1;

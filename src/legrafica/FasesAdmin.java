@@ -30,15 +30,15 @@ public class FasesAdmin extends javax.swing.JFrame {
      */
     private String nombreTabla;
     private DefaultTableModel modelo = new DefaultTableModel();
-    private legrafica.Modelos.Proyectos idProyecto;
+    private legrafica.Modelos.Proyectos modeloProyecto;
     private SimpleDateFormat dFormat = new SimpleDateFormat("dd/MM/yyyy");
     private Date today = new Date();
 
     public FasesAdmin(legrafica.Modelos.Proyectos parametro) {
         initComponents();
-        idProyecto = parametro;
+        modeloProyecto = parametro;
         this.setLocationRelativeTo(null);
-        setTitle("Cronograma");
+        setTitle("Proyecto - " + modeloProyecto.getNombre());
         
         llenarTabla();
         llenarComboBox();
@@ -52,7 +52,7 @@ public class FasesAdmin extends javax.swing.JFrame {
     }
 
     private void llenarTabla() {
-        nombreTabla = "proyecto" + idProyecto.getId();
+        nombreTabla = "proyecto" + modeloProyecto.getId();
         Connection con = ConnectDB.getConnection();
         Statement consulta = null;
         if (con != null) {
@@ -68,7 +68,6 @@ public class FasesAdmin extends javax.swing.JFrame {
 
                 }
             } catch (SQLException ex) {
-                System.out.println("no se pudo suckker");
                 Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -367,8 +366,6 @@ public class FasesAdmin extends javax.swing.JFrame {
         btnCrear.setEnabled(false);
         btnModificar.setEnabled(true);
         btnCancelar.setEnabled(true);
-        
-
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
@@ -399,7 +396,7 @@ public class FasesAdmin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(frame, "La fecha de inicio no puede ser mayor a la fecha de termino");
         } else {
             try {
-                nombreTabla = "proyecto" + idProyecto.getId();
+                nombreTabla = "proyecto" + modeloProyecto.getId();
                 Connection con = ConnectDB.getConnection();
                 String sql = "INSERT INTO `" + nombreTabla + "` (`id`, `etapa`, `fecha_inicio`, `fecha_termino`, `status`, "
                         + "`encargado`, `proyectoId`) VALUES (NULL, ?, ?, ?, ?, ?, ?);";
@@ -409,7 +406,7 @@ public class FasesAdmin extends javax.swing.JFrame {
                 ps.setString(3, fechaTermino);
                 ps.setString(4, estado);
                 ps.setString(5, cbxEncargado.getSelectedItem().toString());
-                ps.setInt(6, idProyecto.getId());
+                ps.setInt(6, modeloProyecto.getId());
 
                 ps.executeUpdate();
                 limpiarCampos();
@@ -423,7 +420,7 @@ public class FasesAdmin extends javax.swing.JFrame {
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         JDialog frame = new JDialog();
-        nombreTabla = "proyecto" + idProyecto.getId();
+        nombreTabla = "proyecto" + modeloProyecto.getId();
         
         String fechaInicio = dFormat.format(dcInicio.getDate());
         String fechaTermino = dFormat.format(dcTermino.getDate());

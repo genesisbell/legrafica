@@ -395,8 +395,6 @@ public class ClientesAdmin extends javax.swing.JFrame {
         }
         if (estado.equals("enProyecto")) {
             radioConProyecto.setSelected(true);
-            
-            //btnAbrirProyecto.setEnabled(true);
         }
         if (estado.equals("deshabilitado")) {
             radioDeshabilitar.setSelected(true);

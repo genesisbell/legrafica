@@ -177,9 +177,10 @@ public class VentanaLogin extends javax.swing.JFrame {
                         nombre = rs.getString(2);
 
                     }
-                    ProyectoCliente proyecto = new ProyectoCliente();
-                    proyecto.idCliente = id;
-                    proyecto.nombreCliente = nombre;
+                    legrafica.Modelos.Cliente clienteModelo = new legrafica.Modelos.Cliente();
+                    clienteModelo.setId(id);
+                    clienteModelo.setNombre(nombre);
+                    ProyectoCliente proyecto = new ProyectoCliente(clienteModelo);
                     proyecto.setVisible(true);
                     this.setVisible(false);
 

@@ -4,23 +4,24 @@ package legrafica.Modelos;
  *
  * @author genesisbell
  */
-public class Proyectos {
-    private int IdProyectos;
-    private String nombreProyectos;
+public class Cliente {
+    private int idCliente;
+    private String nombreCliente;
     
     public int getId(){
-        return IdProyectos;
+        return idCliente;
     }
     
     public void setId(int newId){
-        this.IdProyectos = newId;
+        this.idCliente = newId;
     }
     
     public String getNombre(){
-        return nombreProyectos;
+        return nombreCliente;
     }
     
     public void setNombre(String newNombre){
-        this.nombreProyectos = newNombre;
+        this.nombreCliente = newNombre;
     }
+    
 }

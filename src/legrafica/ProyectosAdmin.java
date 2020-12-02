@@ -36,8 +36,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         setTitle("Proyectos");
         llenarTabla();
-        llenarComboBox();
-        
+        llenarComboBox();        
         
         radioPorHacer.setSelected(true);
         radioPaginaWeb.setSelected(true);
@@ -45,7 +44,6 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         btnModificar.setEnabled(false);
         btnCancelar.setEnabled(false);
         btnCrono.setEnabled(false);
-
     }
 
     private void llenarTabla() {
@@ -80,10 +78,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
             ResultSet rsCliente = consultaCliente.executeQuery("Select id, nombre FROM cliente");
 
             while (rsCliente.next()) {
-                cbxCliente.addItem(rsCliente.getString(2));
-                //cbxCliente.insertItemAt(rsCliente.getString(2), rsCliente.getInt(1));
-                //cbxCliente.setSelectedIndex(rsCliente.getInt(1));
-                
+                cbxCliente.addItem(rsCliente.getString(2));                
             }
             rsCliente.close();
 
@@ -654,14 +649,16 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
     private void btnCronoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCronoActionPerformed
         int esteProyecto = (Integer.parseInt(txtId.getText()));
-        legrafica.Modelos.Proyectos idProyecto = new legrafica.Modelos.Proyectos();
-        idProyecto.setId(esteProyecto);
+        String nombreProyecto = txtNombre.getText();
+        legrafica.Modelos.Proyectos modeloProyecto = new legrafica.Modelos.Proyectos();
+        modeloProyecto.setId(esteProyecto);
+        modeloProyecto.setNombre(nombreProyecto);
 
         String nombreTabla = "proyecto" + esteProyecto;
         try {
             Connection con = ConnectDB.getConnection();
             if(tableExist(con, nombreTabla)){
-                FasesAdmin fases = new FasesAdmin(idProyecto);
+                FasesAdmin fases = new FasesAdmin(modeloProyecto);
                 fases.setVisible(true);
             }else{
                 String sql = "CREATE TABLE `legrafica`.`" + nombreTabla + "` ( `id` INT(11)"
@@ -670,48 +667,17 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                     + "NOT NULL , `status` ENUM('terminado','en_proceso','por_hacer') "
                     + "NOT NULL , `encargado` VARCHAR(50) NOT NULL , proyectoId int,  PRIMARY KEY (`id`), FOREIGN KEY (`proyectoId`) REFERENCES proyecto(`id`) ) "
                     + "ENGINE = InnoDB;";
-                    //+ "ALTER TABLE `cronograma` ADD FOREIGN KEY (`admin`) REFERENCES `admin` (`id`);"; ////ojooo
-//                String sql = "CREATE TABLE `cronograma` (\n" +
-//                    "  `id` int PRIMARY KEY AUTO_INCREMENT,\n" +
-//                    "  `etapa` varchar(50),\n" +
-//                    "  `fecha_inicio` datetime(now),\n" +
-//                    "  `fecha_termino` datetime,\n" +
-//                    "  `status` ENUM ('terminado', 'en_proceso', 'por_hacer'),\n" +
-//                    "  `admin` int\n" +
-//                    ");";
                 PreparedStatement ps;
                 ps = con.prepareStatement(sql);
-//                
-//                String update = "UPDATE `proyecto` SET `cronograma` = ? WHERE `proyecto`.`id` = ?; ";
-//                PreparedStatement psUpdate = con.prepareStatement(update);
-//                psUpdate.setString(1, "3");
-//                psUpdate.setString(2, txtId.getText());
 
                 ps.executeUpdate();
-                //psUpdate.executeUpdate();
-                FasesAdmin fases = new FasesAdmin(idProyecto);
+                FasesAdmin fases = new FasesAdmin(modeloProyecto);
                 fases.setVisible(true);
             }
                
-            
-
         } catch (SQLException ex) {
             Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
-     ;
-//
-//        try {
-//            Connection con = ConnectDB.getConnection();
-//            String sql = "UPDATE `proyecto` SET `cronograma` = ? WHERE `proyecto`.`id` = ?;  ";
-//            PreparedStatement ps;
-//            ps = con.prepareStatement(sql);
-//            ps.setString(1, Integer.toString(idProyecto));
-//            ps.setString(2, Integer.toString(idProyecto));
-//            ps.executeUpdate();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(ClientesAdmin.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
     }//GEN-LAST:event_btnCronoActionPerformed
 
     private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed

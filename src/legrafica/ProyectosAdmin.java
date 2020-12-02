@@ -81,6 +81,9 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
             while (rsCliente.next()) {
                 cbxCliente.addItem(rsCliente.getString(2));
+                //cbxCliente.insertItemAt(rsCliente.getString(2), rsCliente.getInt(1));
+                //cbxCliente.setSelectedIndex(rsCliente.getInt(1));
+                
             }
             rsCliente.close();
 
@@ -463,12 +466,19 @@ public class ProyectosAdmin extends javax.swing.JFrame {
         } else {
             try {
                 Connection con = ConnectDB.getConnection();
-                String sql = "INSERT INTO `proyecto` (`id`, `nombre`, `cliente`, `categoria`, `encargado`, `status`, `cronograma`) "
-                        + "VALUES (NULL, ?, ?, '" + categoria + "', ?, '" + estado + "', NULL);";
+                String sql = "INSERT INTO `proyecto` (`id`, `nombre`, `cliente`, `categoria`, `encargado`, `status`, `cronograma`, `clienteId`) "
+                        + "VALUES (NULL, ?, ?, '" + categoria + "', ?, '" + estado + "', NULL, ?);";
+                
+                Statement consultaCliente = con.createStatement();
+                ResultSet clienteId = consultaCliente.executeQuery("Select id FROM cliente WHERE nombre = '" + cbxCliente.getSelectedItem().toString() + "'");
+                
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtNombre.getText());
                 ps.setString(2, cbxCliente.getSelectedItem().toString());
                 ps.setString(3, cbxEncargado.getSelectedItem().toString());
+                if(clienteId.next()){
+                    ps.setInt(4, clienteId.getInt(1));                  
+                }
 
                 ps.executeUpdate();
                 limpiarCampos();
@@ -606,7 +616,11 @@ public class ProyectosAdmin extends javax.swing.JFrame {
 
             try {
                 Connection con = ConnectDB.getConnection();
-                String sql = "UPDATE `proyecto` SET `nombre` = ?, `cliente` = ?, `categoria` = ?, `encargado`= ?, `status` = ? WHERE `proyecto`.`id` = ?; ";
+                String sql = "UPDATE `proyecto` SET `nombre` = ?, `cliente` = ?, `categoria` = ?, `encargado`= ?, `status` = ?, `clienteId` = ? WHERE `proyecto`.`id` = ?; ";
+                
+                Statement consultaCliente = con.createStatement();
+                ResultSet clienteId = consultaCliente.executeQuery("Select id FROM cliente WHERE nombre = '" + cbxCliente.getSelectedItem().toString() + "'");
+                
                 PreparedStatement ps;
                 ps = con.prepareStatement(sql);
                 ps.setString(1, txtNombre.getText());
@@ -614,7 +628,11 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                 ps.setString(3, categoria);
                 ps.setString(4, cbxEncargado.getSelectedItem().toString());
                 ps.setString(5, estado);
-                ps.setString(6, txtId.getText());
+                if(clienteId.next()){
+                    ps.setInt(6, clienteId.getInt(1));                  
+                }
+                ps.setString(7, txtId.getText());
+             
                 ps.executeUpdate();
 
                 btnCrearProyecto.setEnabled(true);
@@ -650,7 +668,7 @@ public class ProyectosAdmin extends javax.swing.JFrame {
                     + " NOT NULL AUTO_INCREMENT , `etapa` VARCHAR(50) NOT NULL , "
                     + "`fecha_inicio` VARCHAR(20) NOT NULL , `fecha_termino` VARCHAR(20) "
                     + "NOT NULL , `status` ENUM('terminado','en_proceso','por_hacer') "
-                    + "NOT NULL , `encargado` VARCHAR(50) NOT NULL , PRIMARY KEY (`id`)) "
+                    + "NOT NULL , `encargado` VARCHAR(50) NOT NULL , proyectoId int,  PRIMARY KEY (`id`), FOREIGN KEY (`proyectoId`) REFERENCES proyecto(`id`) ) "
                     + "ENGINE = InnoDB;";
                     //+ "ALTER TABLE `cronograma` ADD FOREIGN KEY (`admin`) REFERENCES `admin` (`id`);"; ////ojooo
 //                String sql = "CREATE TABLE `cronograma` (\n" +

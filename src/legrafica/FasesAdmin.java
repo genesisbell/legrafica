@@ -402,13 +402,14 @@ public class FasesAdmin extends javax.swing.JFrame {
                 nombreTabla = "proyecto" + idProyecto.getId();
                 Connection con = ConnectDB.getConnection();
                 String sql = "INSERT INTO `" + nombreTabla + "` (`id`, `etapa`, `fecha_inicio`, `fecha_termino`, `status`, "
-                        + "`encargado`) VALUES (NULL, ?, ?, ?, ?, ?);";
+                        + "`encargado`, `proyectoId`) VALUES (NULL, ?, ?, ?, ?, ?, ?);";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setString(1, txtEtapa.getText());
                 ps.setString(2, fechaInicio);
                 ps.setString(3, fechaTermino);
                 ps.setString(4, estado);
                 ps.setString(5, cbxEncargado.getSelectedItem().toString());
+                ps.setInt(6, idProyecto.getId());
 
                 ps.executeUpdate();
                 limpiarCampos();
